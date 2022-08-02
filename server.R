@@ -162,12 +162,21 @@ LV1<-function(x,df){
   mdf=manip_df(df)
   mu1=x[[1]] ; mu2=x[[2]] ; sigma21=x[[3]] ; sigma22=x[[4]] ; rho=x[[5]] ; cov=x[[6]]*sqrt(sigma21*sigma22)
   djumps=mdf[[7]]; Dtauj=mdf[[8]]; Dyj=mdf[[9]]; dtji=mdf[[10]]; dyji=mdf[[11]]
-  logvrais=(sum(log(2*pi *sigma21 *dtji )/2+ (1/2)*((dyji-mu1*dtji)^2)/(sigma21*dtji))
-             +sum(log(2*pi *rho^2 *Dtauj*(sigma22-(cov^2/sigma21)))/2
-                  +(1/2)*((djumps+rho*(mu2*Dtauj+cov*(1/sigma21)*(Dyj-mu1*Dtauj)))^2)/(rho^2*Dtauj*(sigma22-(cov^2/sigma21)))))
+  logvrais=0.5*(sum(log(2*pi *sigma21 *dtji )+ ((dyji-mu1*dtji)^2)/(sigma21*dtji))
+             +sum(log(2*pi *rho^2 *Dtauj*(sigma22-(cov^2/sigma21)))
+                  +((djumps+rho*(mu2*Dtauj+(cov/sigma21)*(Dyj-mu1*Dtauj)))^2)/(rho^2*Dtauj*(sigma22-(cov^2/sigma21)))))
   return(logvrais)
 }  
 
+# LV1.corr<-function(x,df){
+#   mdf=manip_df(df)
+#   mu1=x[[1]] ; mu2=x[[2]] ; sigma21=x[[3]] ; sigma22=x[[4]] ; rho=x[[5]] ; r=x[[6]]
+#   djumps=mdf[[7]]; Dtauj=mdf[[8]]; Dyj=mdf[[9]]; dtji=mdf[[10]]; dyji=mdf[[11]]
+#   logvrais=0.5*(sum(log(2*pi *sigma21 *dtji )+ ((dyji-mu1*dtji)^2)/(sigma21*dtji))
+#                 +sum(log(2*pi *rho^2 *Dtauj*sigma22*(1-r^2))
+#                      +((djumps+rho*(mu2*Dtauj+(r*sqrt(sigma22/sigma21))*(Dyj-mu1*Dtauj)))^2)/(rho^2*Dtauj*sigma22*(1-r^2))))
+#   return(logvrais)
+# }  
 
 
 
@@ -367,7 +376,9 @@ plotARD1 <- function(df,taus,Xt,t,mod) {
 traj<-function(df){
   t<-df[,1]
   nb_maint=length(which(diff(t)==0))
-  if((dim(df)[1]/nb_maint)==(nb_maint+1)){ #on enleve aussi la derniere valeur si besoin
+  n=length(t)
+  tau_periode=floor((n/(nb_maint+1))-1)
+  if(n==((tau_periode+1)*(nb_maint+1))){ #on enleve aussi la derniere valeur si besoin
     new_df<-df[-c(which(diff(t)==0),which(diff(t)==0)+1,length(t)),]
   }else{
     new_df<-df[-c(which(diff(t)==0),which(diff(t)==0)+1),]
@@ -409,7 +420,7 @@ LV4<-function(x,df){
   logvrais=(1/2)*(sum(log(2*pi *sigma21 *dtji )+((dyji-mu1*dtji)^2)/(sigma21*dtji))
              +sum(log(2*pi *(sig2.zj-rho^2 *cov^2*((Dt_obs/sigma21)+(c(0,(pvec[-1])^2)/c(1,sig2.zj[-(length(sig2.zj))]))))) #1 au pif
                   +(djumps-mu.zj+((rho*cov)/sigma21)*(Dyj-mu1*Dt_obs)
-                 +(rho*cov*c(0,pvec[-1])/c(1,sig2.zj[-(length(sig2.zj))]))*(c(0,djumps[-length(djumps)])-c(0,mu.zj[-length(mu.zj)])))^2/(sig2.zj-rho^2 *cov^2*((Dt_obs/sigma21)+(c(0,pvec[-1])^2/c(1,sig2.zj[-length(sig2.zj)]))))))
+                 +(rho*cov*c(0,pvec[-1])/c(1,sig2.zj[-(length(sig2.zj))]))*(c(0,djumps[-length(djumps)])-c(0,mu.zj[-length(mu.zj)])))^2/(sig2.zj-rho^2 *cov^2*((Dt_obs/sigma21)+((c(0,pvec[-1])^2)/c(1,sig2.zj[-length(sig2.zj)]))))))
   return(logvrais)
 }  
 
