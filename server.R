@@ -37,8 +37,8 @@ ARD1 <-  function(al,ale,mu1,mu2,sig21,sig22,rho,r, n,p,tau_periode,perio) { #r 
     Xt<-rbind(0,apply(inc,2,cumsum))
     
     if (nb_maint > 0) {
-      taus <-
-        c(0, t[seq(tau_periode + 1, by = tau_periode, length.out = nb_maint)], t[length(t)])
+      taus0<-t[seq(tau_periode + 1, by = tau_periode, length.out = nb_maint)]
+      taus <- c(0, taus0, t[length(t)])
       Xt0 <- Xt[, 1][t <= taus[2]]
       ty <- sort(c(t, taus[-c(1, length(taus))]))
       for (i in 2:(length(taus) - 1)) {
@@ -372,6 +372,9 @@ plotARD1 <- function(df,taus,Xt,t,mod) {
 #### CAS 4 ####
 ###############
 
+Nb_maint4<-function(n,tau_periode){
+  return(floor((n-2)/(tau_periode-1)))
+}
 
 traj<-function(df){
   t<-df[,1]
@@ -384,6 +387,41 @@ traj<-function(df){
     new_df<-df[-c(which(diff(t)==0),which(diff(t)==0)+1),]
   }
   return(new_df)
+}
+
+
+
+
+plotARD1_4 <- function(df1,taus,Xt,t,mod) { #df1 doit correspondre au df du cas 1
+  dfNA<-df1
+  taus.b<-taus[-c(1,length(taus))]
+  ind_t<-pmatch(rep(taus.b,each=2),df1[,1])
+  ind_t<-ind_t[!is.na(ind_t)]
+  dfNA[ind_t,2]<-NA
+  if( (t[length(t)])==(taus.b[length(taus.b)]+unique(diff(taus[-length(taus)])))){
+    dfNA[dim(df1)[1],2]<-NA} # derniere valeur en NA si tfinal instant de maint
+  gg = ggplot(df1, aes(x = Temps, y = Degradation))+ geom_line(linetype="dotted") +
+    geom_line(data=dfNA)+geom_point(data=dfNA)+
+    theme_bw() +
+    theme(panel.grid.minor.y = element_blank(),
+          panel.grid.minor.x = element_blank()) +
+    labs(x = "Time") + scale_x_continuous(breaks = taus)
+  
+  if(mod){
+    vec_traj<-rep(1:2,each=length(t))
+  }else{vec_traj<-rep(c("a","b"),each=length(t))}
+  
+  df_Xt<-data.frame(Temps=rep(t,2),Degradation=c(Xt),
+                    traj=vec_traj)
+  
+  df_Xt$traj<-as.factor(df_Xt$traj)
+  gg=gg+geom_line(data=df_Xt,aes(x=Temps,y=Degradation,color=traj),alpha=0.2)+
+    geom_point(data=df_Xt,aes(x=Temps,y=Degradation,color=traj),alpha=0.2)
+  
+  
+  gg=gg+scale_color_discrete(name = "X(t)")
+  
+  return(gg)
 }
 
 
@@ -474,10 +512,26 @@ est_bxp4<-function(Mopt,par,para_vec){
     theme(axis.text.x = element_blank(),axis.ticks = element_blank())+
     labs(y=para_c[par])+
     geom_hline(yintercept = para_vec[par],color="red")
-   #coord_cartesian(ylim = c(1.5,6.5))
-    #scale_y_continuous(limits=c(-1,1))
+    
+  clim_mu<-c(para_vec[par]-3,para_vec[par]+3)
+  clim_sig<-c(para_vec[par]-5,para_vec[par]+5)
+  clim_rho<-c(para_vec[par]-0.5,para_vec[par]+0.5)
   
-  #scale_y_continuous(limits=c(quantile(Mopt[,i],0.1)-1,quantile(Mopt[,i],0.9)+1))
+  if(par==1 |par==2){
+    gg<-gg+coord_cartesian(ylim = clim_mu)
+  }
+  if(par==3 | par==4){
+    gg<-gg+coord_cartesian(ylim = clim_sig)
+    
+  }
+  if(par==5){
+    gg<-gg+coord_cartesian(ylim = clim_rho)
+    
+  }
+  if(par==6){
+    gg<-gg+scale_y_continuous(limits=c(-1,1))
+    
+  }
   
   return(gg)
 
@@ -581,55 +635,99 @@ shinyServer(function(input, output,session) {
       validate()
       
       if (input$model == "X^{(1)}, X^{(2)}") {
-        ard1 <-
-          ARD1(
-            val$al,
-            val$ale,
-            input$mu1,
-            input$mu2,
-            input$var1,
-            input$var2,
-            input$rho,
-            input$corr,
-            input$n,
-            input$p,
-            input$tau_periode,
-            perio = T
-          )
-        df <-
-          ard1$dfY
-        taus <- ard1$taus
-        Xt <- ard1$Xt
-        t <- ard1$t
-        Xtab = Xtab.bis(Xt)
-        if (input$but == "CAS 1") {
-          plotARD1(df, taus, Xt, t, mod = T)
-        } else{
-          plotARD1(traj(df), taus, Xt, t, mod = T)
-        }
-      } else{
-        Xt <-
-          Xtab(
-            val$ale,
-            input$mua,
-            input$mub,
-            input$sig2a,
-            input$sig2b,
-            input$corrab,
-            input$n,
-            input$p,
-            input$tau_periode
-          )
-        ard1ab <-
-          ARD1_AB(Xt, input$p, input$rho, input$tau_periode, input$n)
-        df <- ard1ab$dfY
-        taus <- ard1ab$taus
-        t <- ard1ab$t
         
         if (input$but == "CAS 1") {
+          ard1 <-
+            ARD1(
+              val$al,
+              val$ale,
+              input$mu1,
+              input$mu2,
+              input$var1,
+              input$var2,
+              input$rho,
+              input$corr,
+              input$n,
+              input$p,
+              input$tau_periode,
+              perio = T
+            )
+          df <- ard1$dfY
+          taus <- ard1$taus
+          Xt <- ard1$Xt
+          t <- ard1$t
+          Xtab = Xtab.bis(Xt)
+          
+          plotARD1(df, taus, Xt, t, mod = T)
+        } else{
+          ard1 <-
+            ARD1(
+              val$al,
+              val$ale,
+              input$mu1,
+              input$mu2,
+              input$var1,
+              input$var2,
+              input$rho,
+              input$corr,
+              input$n+2*Nb_maint4(input$n,input$tau_periode),
+              input$p,
+              input$tau_periode,
+              perio = T
+            )
+          df <- ard1$dfY
+          taus <- ard1$taus
+          Xt <- ard1$Xt
+          t <- ard1$t
+          Xtab = Xtab.bis(Xt)
+          
+          plotARD1_4(df, taus, Xt, t, mod = T)
+        }
+      } else{
+       
+        if (input$but == "CAS 1") {
+          Xt <-
+            Xtab(
+              val$ale,
+              input$mua,
+              input$mub,
+              input$sig2a,
+              input$sig2b,
+              input$corrab,
+              input$n,
+              input$p,
+              input$tau_periode
+            )
+          ard1ab <-
+            ARD1_AB(Xt, input$p, input$rho, input$tau_periode, input$n)
+          df <- ard1ab$dfY
+          taus <- ard1ab$taus
+          t <- ard1ab$t
+          
+          
           plotARD1(df, taus, Xt, t, mod = F)
         } else{
-          plotARD1(traj(df), taus, Xt, t, mod = F)
+          
+          Xt <-
+            Xtab(
+              val$ale,
+              input$mua,
+              input$mub,
+              input$sig2a,
+              input$sig2b,
+              input$corrab,
+              input$n+2*Nb_maint4(input$n,input$tau_periode),
+              input$p,
+              input$tau_periode
+            )
+          ard1ab <-
+            ARD1_AB(Xt, input$p, input$rho, input$tau_periode, input$n)
+          df <- ard1ab$dfY
+          taus <- ard1ab$taus
+          t <- ard1ab$t
+          
+          
+          plotARD1_4(df, taus, Xt, t, mod = F)
           
         }
       }
@@ -673,8 +771,13 @@ shinyServer(function(input, output,session) {
     
     output$table<-renderTable({
       if(input$but == "CAS 1"){
-        M1<-data.frame(Maintenances=round(Nb_maint(input$n,input$tau_periode),0))
-        colnames(M1)<-"Nombre de maintenances"
+        M1<-data.frame(Maintenances=round(Nb_maint(input$n,input$tau_periode),0),n_j=input$tau_periode-1)
+        colnames(M1)<-c("Nombre de maintenances","n_j")
+        M1
+      }else{
+        
+        M1<-data.frame(Maintenances=floor((input$n-2)/(input$tau_periode-1)),n_j=input$tau_periode-1)
+        colnames(M1)<-c("Nombre de maintenances","n_j")
         M1
       }
     })
@@ -784,6 +887,16 @@ shinyServer(function(input, output,session) {
       p5<-est_bxp(Mopt,5,c(input$mu1,input$mu2,input$var1,input$var2,input$rho,input$corr))
       p6<-est_bxp(Mopt,6,c(input$mu1,input$mu2,input$var1,input$var2,input$rho,input$corr))
       grid.arrange(p1,p2,p3,p4,p5,p6,ncol=2, nrow = 3)
+      }else{
+        Mopt4<-est_para4(val4$ale,input$mu1,input$mu2,input$var1,input$var2,input$rho,input$corr, input$n,input$p,input$tau_periode,perio=T,input$nbsimu)
+        
+        p1<-est_bxp4(Mopt4,1,c(input$mu1,input$mu2,input$var1,input$var2,input$rho,input$corr))
+        p2<-est_bxp4(Mopt4,2,c(input$mu1,input$mu2,input$var1,input$var2,input$rho,input$corr))
+        p3<-est_bxp4(Mopt4,3,c(input$mu1,input$mu2,input$var1,input$var2,input$rho,input$corr))
+        p4<-est_bxp4(Mopt4,4,c(input$mu1,input$mu2,input$var1,input$var2,input$rho,input$corr))
+        p5<-est_bxp4(Mopt4,5,c(input$mu1,input$mu2,input$var1,input$var2,input$rho,input$corr))
+        p6<-est_bxp4(Mopt4,6,c(input$mu1,input$mu2,input$var1,input$var2,input$rho,input$corr))
+        grid.arrange(p1,p2,p3,p4,p5,p6,ncol=2, nrow = 3)
       }
     })
     
