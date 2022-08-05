@@ -190,7 +190,7 @@ est_para<-function(al,ale, mu1,mu2,sig21,sig22,rho,r, n,p,tau_periode,perio,nb_s
     -Inf,Inf,
     0,Inf,
     0,Inf,
-    0.001,1,
+    0,1,
     -0.99,0.99
   ), nc=2, byrow=TRUE)
   colnames(bounds) <- c("lower", "upper")
@@ -297,7 +297,7 @@ RUL1 <-function(mu1,mu2,sig21,sig22,rho,r,p,tau_periode,s) {
     incX <- incX + inc
     Xt <- rbind(Xt, incX)
     df[j, ] <- c(t, incY)
-    if ((t==p * tau_p) & (incY<s)) { #temps de maintenance
+    if (as.character(t)==as.character(p * tau_p) & (incY<s)) { #temps de maintenance
       j <- j + 1
       incY <- Xt[dim(Xt)[1], 1] - rho * Xt[dim(Xt)[1], 2]
       df[j, ] <- c(t, incY)
@@ -455,6 +455,7 @@ LV4<-function(x,df){
   mu.zj<-mu1*2*pvec-rho*mu2*Dtauj #length=nb_maint
   sig2.zj<-sigma21*2*pvec+rho^2*sigma22*Dtauj-2*rho*cov*pvec
   
+
   logvrais=(1/2)*(sum(log(2*pi *sigma21 *dtji )+((dyji-mu1*dtji)^2)/(sigma21*dtji))
              +sum(log(2*pi *(sig2.zj-rho^2 *cov^2*((Dt_obs/sigma21)+(c(0,(pvec[-1])^2)/c(1,sig2.zj[-(length(sig2.zj))]))))) #1 au pif
                   +(djumps-mu.zj+((rho*cov)/sigma21)*(Dyj-mu1*Dt_obs)
@@ -472,7 +473,7 @@ est_para4<-function(ale, mu1,mu2,sig21,sig22,rho,r, n,p,tau_periode,perio,nb_sim
     -Inf,Inf,
     0,Inf,
     0,Inf,
-    0.001,1,
+    -1,2,
     -0.99,0.99
   ), nc=2, byrow=TRUE)
   colnames(bounds) <- c("lower", "upper")
