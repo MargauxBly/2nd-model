@@ -190,7 +190,7 @@ est_para<-function(al,ale, mu1,mu2,sig21,sig22,rho,r, n,p,tau_periode,perio,nb_s
     -Inf,Inf,
     0,Inf,
     0,Inf,
-    0,1,
+    -1,2,
     -0.99,0.99
   ), nc=2, byrow=TRUE)
   colnames(bounds) <- c("lower", "upper")
@@ -307,7 +307,6 @@ RUL1 <-function(mu1,mu2,sig21,sig22,rho,r,p,tau_periode,s) {
     deg <- df[, 2]
     j <- j + 1
   }
-  #return (df[-(dim(df)[1]),])
   return (t-p)
 }
 
@@ -351,18 +350,23 @@ plotARD1 <- function(df,taus,Xt,t,mod) {
     labs(x = "Time") + scale_x_continuous(breaks = taus)
   
   if(mod){
-  vec_traj<-rep(1:2,each=length(t))
-  }else{vec_traj<-rep(c("a","b"),each=length(t))}
+    vec_traj<-rep(1:2,each=length(t))
+    couleur<-c( "#e06cf0","#56B4E9")
+  }else{vec_traj<-rep(c("a","b"),each=length(t))
+    couleur<-c( "#E69F00", "#56B4E9")
+  }
   
   df_Xt<-data.frame(Temps=rep(t,2),Degradation=c(Xt),
                     traj=vec_traj)
   
     df_Xt$traj<-as.factor(df_Xt$traj)
     gg=gg+geom_line(data=df_Xt,aes(x=Temps,y=Degradation,color=traj),alpha=0.2)+
-      geom_point(data=df_Xt,aes(x=Temps,y=Degradation,color=traj),alpha=0.2)
+      geom_point(data=df_Xt,aes(x=Temps,y=Degradation,color=traj),alpha=0.2)+
+      scale_color_manual(name = "X(t)",values=couleur)
+    
       
   
-  gg=gg+scale_color_discrete(name = "X(t)")
+  #gg=gg+scale_color_discrete(name = "X(t)")
   return(gg)
 }
 
@@ -430,7 +434,7 @@ manip_df4<-function(df){
   Dy=diff(df[,"Degradation"]) #Delta y_{j,i} et sauts
   p<-Dt[1]
   df2=data.frame(DTemps=Dt,DDegradation=Dy)
-  nb_maint=sum((Dt)==(max(Dt))) #si perio, ne larche qu avec un operateur comme + comprends pas pq...
+  nb_maint=sum((Dt)==(max(Dt))) #si perio, ne marche qu avec un operateur comme + comprends pas pq...
   tau_periode=which((Dt)==(max(Dt)))[1]
   df2_NOj=df2[(df2[,1])!=(max(Dt)),] #sans les sauts : Delta t_{j,i} et  Delta y_{j,i}
   djumps=df2[(df2[,1])==(max(Dt)),2]  #juste les sauts
