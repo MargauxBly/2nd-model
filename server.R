@@ -180,10 +180,25 @@ LV1<-function(x,df){
 
 
 
+estim_init<-function(df,rho0,r0){
+  Dt=manip_df(df)[[1]];   djumps=manip_df(df)[[7]]; Dtauj=manip_df(df)[[8]];
+  dtji=manip_df(df)[[10]]; dyji=manip_df(df)[[11]]
+
+  mu10<-sum(dyji)/sum(dtji)
+  
+  sigma210<-sum(((dyji-mu10*dtji)^2)/dtji)/length(dtji)
+  
+  sigma220<-var(djumps)/((rho0^2)*((1-r0)^2)*Dtauj[1])
+  
+  list(mu10=mu10,mu20=mu10,sigma210=sigma210,sigma220=sigma220,rho0=rho0,r0=r0)
+  
+}
+
+  
+  
 
 
-
-est_para<-function(al,ale, mu1,mu2,sig21,sig22,rho,r, n,p,tau_periode,perio,nb_simu){ # flv=fonction log vraisemblance
+est_para<-function(al,ale, mu1,mu2,sig21,sig22,rho,r, n,p,tau_periode,perio,nb_simu,rho0,r0){ # flv=fonction log vraisemblance
  
   bounds <- matrix(c(
     -Inf,Inf,
@@ -212,7 +227,9 @@ est_para<-function(al,ale, mu1,mu2,sig21,sig22,rho,r, n,p,tau_periode,perio,nb_s
   
   for (i in alea){
     df=ARD1(al,i, mu1,mu2,sig21,sig22,rho,r, n,p,tau_periode,perio)$dfY
-    opt_ard<-constrOptim(c(mu1,mu2,sig21,sig22,rho,r),f=LV1,df=df,grad=NULL,ui=ui,ci=ci,method = "Nelder-Mead") #avec contraintes
+    mu10=estim_init(df,rho0,r0)$mu10 ; mu20=estim_init(df,rho0,r0)$mu10 ; 
+    sig210=estim_init(df,rho0,r0)$sigma10 ; sig220=estim_init(df,rho0,r0)$sigma220
+    opt_ard<-constrOptim(c(mu10,mu20,sig210,sig220,rho0,r0),f=LV1,df=df,grad=NULL,ui=ui,ci=ci,method = "Nelder-Mead") #avec contraintes
     #opt_ard<-optim(c(2,2,4,5,0.5,0.5),LV1,df=df) #sans contraintes
     Mopt[k,]<-c(opt_ard$par)
     k=k+1
@@ -316,9 +333,14 @@ RUL1 <-function(mu1,mu2,sig21,sig22,rho,r,p,tau_periode,s) {
 temps_seuil2<-function(mu1,mu2,sig21,sig22,rho,r,p,tau_periode,s,nb_simu){
   ts<-c()
   if(nb_simu>0){
+    withProgress(message = "Making Plot" , {
+      n<-nb_simu
     for(i in 1:nb_simu){
      ts<-c(ts,RUL1(mu1,mu2,sig21,sig22,rho,r,p,tau_periode,s))
+     incProgress((nb_simu*10^(-2))/nb_simu)
     }
+      
+    })
   }
   return(ts)
 }
@@ -832,12 +854,14 @@ shinyServer(function(input, output,session) {
     
     output$density2<-renderPlotly({
       set.seed(val3$ale)
+      
       TS<-temps_seuil2(
                       input$mu1,input$mu2,input$var1,input$var2,input$rho,input$corr,
                       input$p,input$tau_periode,input$s2,input$Nbtr2)
 
       
       plot_rul2(TS=TS,input$Nbtr2,input$lissage2,input$bins2)
+      
       
       
     })
