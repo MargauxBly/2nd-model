@@ -160,7 +160,7 @@ manip_df<-function(df){
 
 LV1<-function(x,df){
   mdf=manip_df(df)
-  mu1=x[[1]] ; mu2=x[[2]] ; sigma21=x[[3]] ; sigma22=x[[4]] ; rho=x[[5]] ; cov=x[[6]]*sqrt(sigma21*sigma22)
+  mu1=x[[1]] ; mu2=mu1 ; sigma21=x[[2]] ; sigma22=x[[3]] ; rho=x[[4]] ; cov=x[[5]]*sqrt(sigma21*sigma22)
   djumps=mdf[[7]]; Dtauj=mdf[[8]]; Dyj=mdf[[9]]; dtji=mdf[[10]]; dyji=mdf[[11]]
   logvrais=0.5*(sum(log(2*pi *sigma21 *dtji )+ ((dyji-mu1*dtji)^2)/(sigma21*dtji))
              +sum(log(2*pi *rho^2 *Dtauj*(sigma22-(cov^2/sigma21)))
@@ -180,17 +180,25 @@ LV1<-function(x,df){
 
 
 
-estim_init<-function(df,rho0,r0){
-  Dt=manip_df(df)[[1]];   djumps=manip_df(df)[[7]]; Dtauj=manip_df(df)[[8]];
+estim_init<-function(df){
+  
+  Dt=manip_df(df)[[1]];   djumps=manip_df(df)[[7]]; Dtauj=manip_df(df)[[8]]; Dyj=manip_df(df)[[9]] ;
   dtji=manip_df(df)[[10]]; dyji=manip_df(df)[[11]]
+
 
   mu10<-sum(dyji)/sum(dtji)
   
   sigma210<-sum(((dyji-mu10*dtji)^2)/dtji)/length(dtji)
+  #sigma220<-(-((mean(djumps)+rho0*mu10*Dtauj[1])*sqrt(sigma210))/(rho0*r0*(Dyj[length(Dyj)]-mu10*Dtauj[1])))^2
+  sigma220<-sigma210-(sigma210/10)
   
-  sigma220<-var(djumps)/((rho0^2)*((1-r0)^2)*Dtauj[1])
-  
-  list(mu10=mu10,mu20=mu10,sigma210=sigma210,sigma220=sigma220,rho0=rho0,r0=r0)
+  # if(length(djumps)>1){
+  #   sigma220<-var(djumps)/((rho0^2)*((1-r0)^2)*Dtauj[1])
+  # }else{
+  #   sigma220<-0.1
+  # }
+  # 
+  list(mu10=mu10,mu20=mu10,sigma210=sigma210,sigma220=sigma220)
   
 }
 
@@ -198,10 +206,8 @@ estim_init<-function(df,rho0,r0){
   
 
 
-est_para<-function(al,ale, mu1,mu2,sig21,sig22,rho,r, n,p,tau_periode,perio,nb_simu,rho0,r0){ # flv=fonction log vraisemblance
- 
+est_para<-function(al,ale, mu1,mu2,sig21,sig22,rho,r, n,p,tau_periode,perio,nb_simu){ # flv=fonction log vraisemblance
   bounds <- matrix(c(
-    -Inf,Inf,
     -Inf,Inf,
     0,Inf,
     0,Inf,
@@ -220,16 +226,17 @@ est_para<-function(al,ale, mu1,mu2,sig21,sig22,rho,r, n,p,tau_periode,perio,nb_s
   ui <- ui[i,]
   ci <- ci[i]
   
-
-  alea=sort(sample((floor(ale)+1):(ale+nb_simu),size=nb_simu,replace = F))
-  Mopt=matrix(0,length(alea),6)
-  k=1
   
+  alea=sort(sample((floor(ale)+1):(ale+nb_simu),size=nb_simu,replace = F))
+  Mopt=matrix(0,length(alea),5)
+  k=1
+
   for (i in alea){
     df=ARD1(al,i, mu1,mu2,sig21,sig22,rho,r, n,p,tau_periode,perio)$dfY
-    mu10=estim_init(df,rho0,r0)$mu10 ; mu20=estim_init(df,rho0,r0)$mu10 ; 
-    sig210=estim_init(df,rho0,r0)$sigma10 ; sig220=estim_init(df,rho0,r0)$sigma220
-    opt_ard<-constrOptim(c(mu10,mu20,sig210,sig220,rho0,r0),f=LV1,df=df,grad=NULL,ui=ui,ci=ci,method = "Nelder-Mead") #avec contraintes
+    mu10=estim_init(df)$mu10 
+    sig210=estim_init(df)$sigma210 ; sig220=estim_init(df)$sigma220
+    rho0<-runif(1,0.001,0.999) ; r0<-runif(1,-0.98,0.98)
+    opt_ard<-constrOptim(c(mu10,sig210,sig220,rho0,r0),f=LV1,df=df,grad=NULL,ui=ui,ci=ci,method = "Nelder-Mead") #avec contraintes
     #opt_ard<-optim(c(2,2,4,5,0.5,0.5),LV1,df=df) #sans contraintes
     Mopt[k,]<-c(opt_ard$par)
     k=k+1
