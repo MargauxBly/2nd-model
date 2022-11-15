@@ -1,0 +1,288 @@
+\input{preambule3}
+
+\begin{document}
+
+\begin{center}
+
+{\LARGE \bf Responses to the reviewer comments
+
+\vspace{2mm}
+
+ASMB-22-58 
+
+\vspace{2mm}
+
+Statistical inference for a Wiener-based degradation model with imperfect maintenance actions under different observation schemes}
+
+\end{center}
+
+\vspace{5mm}
+
+The authors would like to thank the reviewers for the constructive comments that helped
+us to improve the paper. In the following, we provide point-to-point answers to the comments and a description of the changes made regarding each comment in the revised paper.
+The comments and answers are respectively in black italic and black upright text. In the revised manuscript, changes made on the original version are highlighted in \textcolor{blue}{blue}. The deleted sentences are crossed out in \textcolor{red}{red}. %Necessary quotations from the revised manuscripts are also in \textcolor{blue text}.
+
+\vspace{1cm}
+
+\noindent{\bf \large \underline{Associate Editor}}
+
+{\it Both reviewers are positive concerning the paper. However some comments should be taken into account during the revision, especially about the motivation of the proposed observation schemes.}\\
+
+{\bf Answer}
+
+We have given answers to each reviewer comment and put a particular focus on the motivation of the observation schemes in the introduction.\\
+
+\vspace{1cm}
+
+\noindent{\bf \large \underline{Reviewer 1} }
+
+{\it The manuscript focuses on the case of a degrading unit/system/equipment that is subjected to imperfect maintenance. The evolution of the degradation over time is described by using a Wiener process with drift. The effects of maintenance is modelled by using the an Arithmetic Reduction of Degradation (ARD1) model. It is assumed that the degradation level of the unit is regularly measured via ad hoc inspections.
+Four different observation schemes are considered, where the degradation levels can be observed between maintenance actions, and/or just before, and/or just after the maintenance times.. The paper maximum likelihood estimators of model parameters are formulated under each scheme.
+The performances of the estimations are studied under each observation schemes, through an extensive simulation study. Moreover a comparison is performed between the results obtained under the considered difference schemes.\\
+
+\noindent{\bf General comment}
+
+The manuscript is well written. The topic is interesting. The state of the art is clearly illustrated. The maths seems correct to me, although I have not checked all the equations in details.}\\
+
+
+{\bf Comment 1.1}
+
+{\it On the other side, I find that the manuscript would be more convincing if the authors provided motivations for considering the suggested observation schemes. I know that some of these schemes are customarily considered in the existing literature about imperfect maintenance modelling. However, a brief discussion about the practical reasons (e.g., costs, time constrains, others...) which could prevent the use (in real settings) of the scheme 1 and lead to use one of the others would help the reader to better understand the motivation of the study.}\\
+
+{\bf Answer 1.1}
+
+We agree that the motivations for the observation schemes were not enough presented in the initial version of the paper. In fact, we have been interested in these schemes because we have encountered them in the analysis of degradation data from our industrial partners. As these data are unpublished, we do not mention them in the paper. But we have found uses of these different schemes in other publications. These references are now detailed in the following new paragraph, page 3 in the introduction.
+
+\textcolor{blue}{The best way to assess the maintenance action effect is to  measure the degradation level just before and just after the maintenance action (see [28, 27]). For instance, this observation scheme happens in [27] where inspections are made on an electrical distribution device subject to corrosion. However, this situation is not always conceivable. The degradation measures are costly and can also increase the degradation level. In practice, other observation schemes are usually employed. In [16, 26, 4], the observations are only made between maintenance actions. For instance, in [16], intervention scheduling of a railway track is considered. A special train regularly inspects the tracks and collects degradation measures of the track geometry. An analysis of these measures is made in order to schedule the maintenance actions, but no measure is made at the maintenance times.
+  Intermediate situations are possible, such as in [18,12], where the degradation levels are only observed just before each maintenance action.}\\
+
+
+\noindent{\bf Specific comments}\\
+
+{ \bf Comment 1.2}
+
+{\it Page2, lines 25-27: <<Guida and Pulcini [6] pursued this work and considered a non-stationary Inverse Gamma process, i.e. a non monotonous deterioration phenomenon>>
+
+This is incorrect/imprecise: the inverse Gamma process suggested in Guida and Pulcini in [6] is monotone increasing. More specifically, it is a monotonic increasing homogeneous Markov process with dependent increments. That is, it is a monotonic increasing pure state dependent process.}\\
+
+{  \bf Answer 1.2 }
+
+We replaced this sentence on Page 2 by \textcolor{blue}{Guida and Pulcini [6] pursued this work and considered a monotonic increasing homogeneous Markov process with dependent increments.}\\
+
+
+{ \bf Comment 1.3  }
+
+{\it Page 9, lines 7-8: <<$\mathcal{H}_t^m$ : history of the observed degradation process at time t for scheme m.>>
+Customarily by “history of the process” up to and included t one intends $\mathcal{H}_t=\{Y(s),s\leq t\}$.
+Here the authors intends that $\mathcal{H}_t$
+contains all the information about the process history collected up to and included
+I find that the wording <<history of the observed process>> is misleading. I suggest to use different symbols and
+terminology. For example, they could use the symbol $Y_t$ and call it “set of available data at t”.}\\
+
+{ \bf Answer 1.3}
+
+It is true that the use of the notation $\mathcal{H}_t^m$ could be misleading. To avoid any confusion, we now write it $\mathcal{O}_t^m$ (for {\it observations}) and define it as the set of observed data before time $t$ for scheme $m$.\\
+
+{ \bf Comment 1.4 }
+
+{\it Page 9, lines 37-40: <<$\mathcal{H}_{\tau_j}^-$ is the history of the observed degradation process just before $\tau_j$, i.e. the $\sigma$-algebra generated
+by the increments and observed jumps before the jth maintenance for the mth observation scheme.>>
+Also considered what I wrote about $\mathcal{H}_{\tau_j}^-$, the meaning of the sentence: “i.e., the $\sigma$-algebra generated by the
+increments and observed jumps before the jth maintenance for the mth observation scheme” can be difficult to capture. Is it correct? Is it really useful to add this sentence? As before, I suggest to use the wording “set of available data at t”.}\\
+
+
+{ \bf Answer 1.4}
+
+See Answer 1.3. We used the wording {\it set of observations}.\\
+
+
+{ \bf Comment 1.5 }
+
+{\it The adopted notations are not convincing. In the symbol $z_j^m$
+$m$ seems a power. Moreover the meaning of $z_j^m$, that
+is always refereed to as “jump”, changes with $m$.}\\
+
+
+{ \bf Answer 1.5}
+
+Indeed, this initial notation of the jumps could be confusing. We replaced it by $z_j^{(m)}$. The meaning of $z_j^{(m)}$ has also been added in the Notations section on page 9.\\
+
+{ \bf Comment 1.6 }
+
+{\it Page 24 From figure 8 it seem the adopted procedure can provide for $\rho$ values that are greater than 1. Did I read the figure correctly? Is this coherent?
+Please provide a comment for this result.}\\
+
+{ \bf Answer 1.6}
+
+This is correct and due to side effects in the estimation procedure. A comment on this fact has been added on page 23.
+
+\textcolor{blue}{Thereafter, one will notice that the estimator $\hat \rho$ can be inferior to 0 or superior to 1. In practice, these situations could mean that the maintenance action degrades the system ($\hat \rho$ < 0), or, on the contrary, makes the system even better than it was initially ($\hat \rho$ > 1). However, these possibilities are not discussed in this paper. The rare observed values of $\hat \rho$ less than zero or greater than one correspond to side effects in the optimization procedure. To avoid them, it is still possible to constrain the estimations of $\rho$ to belong in [0; 1].}\\
+
+
+{ \bf Comment 1.7}
+
+{\it Page 25. From figure 9 it seem the adopted procedure can provide for $\rho$  negative estimates. Did I read the figure correctly? Is this coherent?
+Please provide a comment for this result.}\\
+ 
+{ \bf Answer 1.7}
+
+Same Answer 1.6.\\
+
+
+{ \bf Comment 1.8}
+
+{\it Page 25, lines 22-24: "The closer the value of $\rho$ is to 1, the better it is estimated." According to which index of performance?}\\
+ 
+{ \bf Answer 1.8}
+
+Classically, we assess the quality of estimators according to their bias and variances, that can be seen on the boxplots. The following sentence has been added on Page 26.
+
+\textcolor{blue}{As a matter of fact, the bias and dispersion of $\rho$'s estimations are way smaller when $\rho$ is close to 1.} \\
+
+
+\noindent{\bf Minor comments}\\
+
+{ \bf Comment 1.9}
+
+{\it Please, check the order of the references and the rule which has to be used to cite them in the body of the manuscript.}\\
+
+{ \bf Answer 1.9}
+
+We have ordered the references according to the journal's rule. \\
+
+{ \bf Comment 1.10 }
+
+{\it Page4, lines 35-38: <<For this last model, they needed to introduce independent copies X(i) of X. In the present paper,
+we consider only the ARD1 model, so only one copy of X is needed.>>
+I find that using more copies of X is not necessary, neither in the case of the ARD1 model nor in the case of the ARA1 model: the Wiener process has independent increments. I think that the Mercier and Castro have used this devise just to simplify the presentation of the ARA1 model. Note that Salles in [16] uses the same devise also to introduce the ARD1 model. I suggest to eliminate this sentence: it only creates confusion.}\\
+
+{ \bf Answer 1.10}
+
+Done.\\
+
+{ \bf Comment 1.11}
+
+{\it Page 5, lines 11-12: <<After the first maintenance action, the system is deteriorating according to X and we have>> I suggest to write; “<<After the first maintenance action, the system deteriorates according to X and we have>>}\\
+ 
+{ \bf Answer 1.11}
+
+Done.\\
+
+{ \bf Comment 1.12 }
+
+{\it Page 12, lines 5-6 <<with dotted lines>> “With dashed lines”.}\\
+
+{ \bf Answer 1.12}
+
+Done.\\
+
+{ \bf Comment 1.13 }\\
+
+{\it Page 13, lines 22-23: <<the missing value $Y(\tau_j^+)$ can be computed>> “the missing value $Y(\tau_j^+)$ can be expressed>>}\\
+
+{ \bf Answer 1.13}
+
+Done.\\
+
+\vspace{1cm}
+
+{\bf \large \underline{Reviewer 2}}\\
+
+{\it The paper by Leroy et al. deals with statistical inference for a degradation model subjected to a maintenance policy with imperfect actions. This paper is a valuable contribution to this emerging area.} \\
+
+{ \bf Comment 2.1}
+
+{\it The authors have considered four different cases according to the availability of the degradation level just before/after the maintenance action. According to me, the first sampling scheme is not relevant and could be skipped (and shorten to just a remark).} \\
+
+{ \bf Answer 2.1 }
+
+As it has been written in Answer 1.1, the best way to assess the maintenance action effect is naturally to  measure the degradation level just before and just after the maintenance action (see [28, 27]). For instance, this observation scheme happens in [27]where inspections are made on an electrical distribution device subject to corrosion. Then, it is still relevant to take this observation scheme into account. These precisions have been added on page 3. However, using the $ARD_1$ model, this observation scheme becomes inappropriate as the jumps are deterministic.\\
+
+
+{ \bf Comment 2.2 }
+
+{\it The notation for the jump around a maintenance time is not very clear. In fact, I think it should be better not to define it in the general case, but just for each sampling scheme.}\\
+
+{ \bf Answer 2.2 }	\\
+
+We changed these notations and detailed them in sub-section 2.4 page 9, according to every observation scheme.\\
+
+
+{ \bf Comment 2.3}
+
+{\it About the third sampling scheme, I think that the problem of identifiability is not specific to the Wiener process, and maybe could be the same for other degradation models (gamma process, inverse Gaussian process, etc.). A remark in this way could be interesting.}\\
+
+{ \bf Answer 2.3 }
+
+
+We agree with this remark. We add this following comment in the article on page 18. 
+
+\textcolor{blue}{The problem is due to the fact that a Gaussian random variable multiplied by a (positive) constant is still Gaussian. Similar properties hold for Gamma and Inverse Gaussian distributions, so the identifiability problem will also occur when the underlying degradation process is Gamma or Inverse Gaussian.}\\
+
+\noindent We also add a brief remark in the conclusion page 29.
+
+
+\textcolor{blue}{This problem is not specific to Wiener processes and can also arise for other underlying degradation processes such as Gamma or Inverse Gaussian processes. } \\
+
+
+
+
+{ \bf Comment 2.4 } 
+
+In other to go steps ahead, could the author expect to derive asymptotic properties of the estimators, at least for some special cases (that should be more easily tractable).\\
+
+{ \bf Answer 2.4 }
+
+This subject is of course of interest but it goes beyond this article's content. We added this proposal as a prospect for the future (page 29). \\
+
+
+
+{ \bf Comment 2.5 }
+
+{\it To conclude, I would like to point out that the degradation considered by the authors may be quite too simple, not only from a practical point of view (I am sure the authors will share this with me), but also from the statistical point of view. Indeed, having a time-homogeneous degradation model simplifies considerably the situation. At least, a discussion about a model with a non-linear drift (say, a power function) will be welcome. In such a case, we can expect that a too short time interval between preventive maintenance and efficient maintenance actions will lead to a bad quality for the estimation.}\\
+ 
+{ \bf Answer 2.5 }
+
+We agree with this remark. Considering non-homogeneous degradation processes is clearly of great interest. However, as for Comment 2.5, this study would be too long for this article. 
+
+\noindent If we consider a non linear drift in the Wiener process, we have :
+
+\noindent $X(t)=\mu \Lambda(t) +\sigma B (\Lambda (t))$ where $B$ is a Brownian motion and $\Lambda$ a non-linear function depending on time.
+ Then, using the $ARD_1$ model :
+ $Y(t)=X(\Lambda(t))- \rho X(\Lambda (\tau_j)) = \mu \ (\Lambda(t)-\rho \Lambda(\tau_j))+ \sigma\ (B(\Lambda(t))-\rho B (\Lambda (\tau_j))$
+
+\noindent Then, $\forall\  t_{j,i} \in [ \tau_j,\tau_{j+1}[, $  $\Delta Y_{j,i}\sim \mathcal{N}\big(\mu\ (\Lambda(t_{j,i})-\Lambda(t_{j,i-1}))\ , \ \sigma^2\ (\Lambda(t_{j,i})-\Lambda(t_{j,i-1}))\big)$
+
+\noindent If $\Lambda$ is known, equivalent results as before will be obtained by replacing $\Delta t_{j,i}$ by  $\Delta \Lambda(t_{j,i})=\Lambda(t_{j,i})-\Lambda(t_{j,i-1})$. On the contrary, if $\Lambda$ is not completely known, it will be necessary to estimate more parameters. For example, if $\Lambda(t)=\alpha t^{\beta}$, then $\alpha$ and $\beta$ should also be estimated.
+
+%\textcolor{red}{Christophe et Laurent, comment comprenez-vous la dernière phrase du rapporteur :} 
+
+%\textcolor{red}{{\it In such a case, we can expect that a too short time interval between preventive maintenance and efficient maintenance actions will lead to a bad quality for the estimation.}}
+
+Moreover, if $\Lambda(t)$ is concave, the increments of degradation will be smaller and smaller, so the parameter estimation will be more and more difficult. Therefore, considering non-homogeneous Wiener process will lead to interesting issues, but they are out of the scope of this paper. 
+
+
+We note that suggestion as a prospect in the conclusion of the paper. The following paragraph has been added at the end of the conclusion. 
+
+\textcolor{blue}{Many other prospects arise from this paper. On the modelling point of view, assuming linear drifts is restrictive. It would be of interest to consider non-homogeneous Wiener processes. On the statistical point of view, deriving confidence intervals and asymptotic properties of the estimators are interesting extensions of this work.}\\
+
+%\textcolor{red}{Sur l'aspect non homogène, on pourrait rajouter les éléments ci-dessous. Mais est-ce que ça en vaut la peine ?}
+
+
+
+%\textcolor{red}{Nous n'avons qu'une seule sorte de maintenance. Est-ce ses {\it efficient maintenance actions} seraient des remplacements ? Ou est-ce qu'il parle d'une courte durée entre les observations et les maintenances ?}
+
+
+
+%In this paper, we are only focusing on preventive maintenance actions. A system can be replaced if the degradation $Y(t)$ exceeds a given threshold but this is not the subject of this article. 
+
+%When there is a short time interval between an observation and a maintenance action, then the estimation's quality is better as the bias and variances of the estimators are smaller. On the contrary,  when the time intervals between observations  and maintenance actions are greater the bias and variances of the estimators seem to be larger.(see Page 27 on the manuscript)}
+
+
+
+
+%\bibliography{references2}
+
+
+
+\end{document}
