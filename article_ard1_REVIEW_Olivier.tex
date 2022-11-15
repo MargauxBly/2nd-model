@@ -1,0 +1,1026 @@
+\input{preambule3}
+\usepackage{soul}
+
+\begin{document}
+\setstcolor{red}
+
+\title{Statistical inference for a Wiener-based degradation model with imperfect maintenance actions under different observation schemes
+\author{Margaux {\sc Leroy}$^{1,2}$, Christophe {\sc B\'erenguer}$^{1}$, Laurent {\sc Doyen}$^{2}$, Olivier {\sc Gaudoin}$^{2}$\\
+1. Univ. Grenoble Alpes, CNRS, Grenoble INP, GIPSA-lab, 38000 Grenoble, France\\
+2. Univ. Grenoble Alpes, CNRS, Grenoble INP, LJK, 38000 Grenoble, France
+}}
+
+\maketitle
+
+\begin{abstract}
+
+This paper studies the statistical inference in a degradation model with imperfect maintenance. Technological or industrial devices subject to degradation undergo maintenance actions that reduce their degradation level. The underlying degradation process is a Wiener process with drift. Maintenance effects are assumed to be imperfect, described by an Arithmetic Reduction of Degradation ($ARD_1$) model. The system is regularly inspected and the degradation levels are measured.  
+Four different observation schemes are considered, so that degradation levels can be observed between maintenance actions as well as just before or just after maintenance times.
+The paper studies the estimation of the model parameters under the four observation schemes. Maximum likelihood estimators are derived for each scheme.
+The quality of the estimations is assessed and the observation schemes are compared through an extensive simulation and performance study.
+
+\end{abstract}
+
+{\it Keywords}: Degradation modeling, Imperfect maintenance, Statistical inference, Observation scheme.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+\label{section:intro}
+%%%%%%%%%%%%%%%%%%%%%%%
+
+Technological or industrial devices and engineering assets (such as dikes, dams, power plants...) are subject to degradation due to intrinsic wear, use imposed by operating conditions or exposure to environmental factors. For such repairable industrial devices or assets, a crucial issue is to maintain the system working under certain operating conditions related to safety and availability. In order to reduce the deterioration level and prevent risks, maintenance actions are carried out. 
+To make better maintenance decisions, it is necessary to analyze the deterioration process and better understand the failure behavior of the system under consideration. 
+
+For this, stochastic degradation models are used, which can capture the random degradation phenomena involved \cite{jonge_review_2020}.
+Several usual stochastic processes have been considered to model the degradation of a system, for different kinds of applications.
+\cite{ye_stochastic_2015} and \cite{kahle_degradation_2016} present a quick survey on the most usual degradation processes.
+Abdel-Hameed was the first to propose the Gamma process as a deterioration model \cite{abdel-hameed_gamma_1975}. After him, this process has been very often used \cite{grall_continuous-time_2002,lawless_covariates_2004, van_noortwijk_survey_2009}.
+Doksum and Normand \cite{doksum_gaussian_1995} proposed a Wiener process with drift to model biomarkers decrease as an health indicator for HIV infected people. Whitmore \cite{whitmore_estimating_1995} used a Wiener process to model materials and components degradation. 
+Harlamov \cite{harlamov_statistics_2006} introduced the Inverse Gamma process as a wear model to describe a monotonically increasing deterioration phenomenon. Guida and Pulcini \cite{guida_inverse_2013} continued this work and considered a monotonically increasing homogeneous Markov process with dependent increments. 
+Wang and Xu \cite{wang_inverse_2010}, Ye and Chen \cite{ye_inverse_2014} proposed to use the Inverse Gaussian process as a degradation model.
+More recently, Giorgio and Pulcini \cite{giorgio_new_2018} introduced the Transformed Beta process, which considers that the degradation increments are not independent but  positively correlated. 
+
+Basic degradation processes have been generalized in order to include several features such as covariates, random effects and maintenance effects. Degradation models with maintenance effects have been proposed in \cite{van_condition-based_2012, mercier_stochastic_2019} for a Gamma underlying degradation process and in \cite{kahle_wiener_2010, zhang_degradation-based_2015, kahle_imperfect_2019, wang_modeling_2020} for a Wiener underlying degradation process.
+For instance, Mercier and Castro  \cite{mercier_stochastic_2019} transposed the ideas of virtual age and arithmetic reduction of age, proposed by Kijima \cite{kijima_results_1989} and Doyen and Gaudoin \cite{doyen_classes_2004}, to degradation models. They introduced the $ARD_1$ model (Arithmetic Reduction of Degradation), for which the effect of a maintenance is to reduce the degradation level by a quantity proportional to the amount of degradation accumulated since the last maintenance.
+
+In practice, when degradation data are observed, a degradation model has to be chosen and its parameters estimated. However, rather few papers have investigated this problem when maintenance effects are taken into account \cite{zhang_degradation-based_2015, giorgio_new_2018, salles_semiparametric_2020,kamranfar_inference_2021}. Different statistical inference methods have been used : maximum likelihood  \cite{kahle_wiener_2010, kamranfar_inference_2021}, moments method \cite{salles_modelling_2020}, semiparametric \cite{salles_modelling_2020}, quasi Monte Carlo integration \cite{zhang_degradation-based_2015}, etc. 
+
+The estimation methods depend on the observation schemes of the degradation levels.
+The best way to assess the maintenance action effect is to measure the degradation level just before and just after the maintenance action (see \cite{zhao_optimal_2019,zhao_accelerated_2021}). For instance, this observation scheme occurs in \cite{zhao_accelerated_2021} where inspections are performed on an electrical distribution device subject to corrosion. However, this situation is not always possible. Degradation measures are costly and can also increase the degradation level. In practice, other observation schemes are usually employed. In \cite{mercier_bivariate_2012,zhang_degradation-based_2015, giorgio_new_2018}, observations are only made between maintenance actions. For instance, in \cite{mercier_bivariate_2012}, intervention scheduling of a railway track is considered. A special train regularly inspects the tracks and collects degradation measures of the track geometry. An analysis of these measures is made in order to schedule the maintenance actions, but no measure is made at the maintenance times. Intermediate situations are possible, such as in \cite{salles_semiparametric_2020, kamranfar_inference_2021}, where the degradation levels are only observed just before each maintenance action.
+
+From a methodological point of view, investigating how these observation schemes affect the quality of inference on the underlying degradation process helps to understand how the different observations and their position allow to acquire a better knowledge of the degradation process. From a practical point of view, when for example each observation has a cost, this also enables to recommend the most suitable observation scheme for monitoring a degrading system for maintenance decision-making purposes.
+
+This paper studies the statistical inference in a degradation model with imperfect maintenance. The Wiener process with drift is used as the underlying degradation process. Maintenance effects are described by the $ARD_1$ model. Four different observation schemes are considered, so that degradation levels can be observed between maintenance actions as well as just before or just after maintenance times. Finally, the quality of the estimations is assessed and the observation schemes are compared through an extensive simulation and performance study. 
+
+The paper is organized as follows.  \Cref{section:model} presents the Wiener-based $ARD_1$ model and the four chosen observation schemes. The statistical inference of the model according to the observation schemes is studied in \Cref{section:stat}. The quality of the estimations and a comparison of the observation schemes are studied in \Cref{section:simu}. Concluding comments are proposed in \Cref{section:conc}.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The Wiener-based $ARD_1$ model}
+\label{section:model}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+This section presents the degradation model and the observation schemes used in the paper. The underlying degradation process is a Wiener process. The effect of maintenance is an arithmetic reduction of degradation, described by the $ARD_1$ model. Four observation schemes are considered, depending on the kind of observations made at maintenance times. Finally, the notations used in the paper are presented.
+
+\subsection{The underlying degradation process} 
+\label{section:Wiener}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Let $X(t)$ be the degradation level at time $t$ of a system that is not maintained. $X=\{X(t)\}_{t\geq 0}$ is called the underlying degradation process. 
+In this paper, $X$ is assumed to be a Wiener process with drift. This process is commonly used in degradation modeling, especially in order to take into account the possibility of non strictly increasing degradation paths.
+
+Therefore, $\forall t \geq 0, X(t)=\mu\ t +\sigma\ B(t)$ where $B$ is a standard Brownian motion. $\mu > 0$ is a drift parameter and $\sigma^2$ is a variance parameter. The Wiener process is such that:
+
+\begin{itemize}
+
+\item $X(0) = 0$ almost surely.
+
+\item The increments are independent. $\forall s_1 < t_1 < s_2 < t_2$, $X(t_1) - X(s_1)$ and $X(t_2) - X(s_2)$ are independent.
+
+\item The increments are normally distributed. $\forall s < t$, $X(t)-X(s)$ has the normal distribution $\mathcal{N}\left(\mu\ (t-s),\ \sigma^2\ (t-s) \right)$. In particular, $X(t)\sim \mathcal{N}(\mu\ t, \sigma^2\ t)$.
+
+\end{itemize}
+
+
+\subsection{The effect of maintenance} 
+\label{section:maintenance}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The system is observed from time 0 to a certain time $\tau$. Between 0 and $\tau$, $k$ maintenance actions (or repairs) are performed at times $\tau_1 <\tau_2,...,<\tau_k$. Maintenance durations are assumed to be negligible or not taken into account. To simplify the mathematical writing, let $\tau_0=0$ and $\tau_{k+1}=\tau$.
+
+An efficient maintenance is expected to reduce the degradation level. Let $Y(t)$ be the degradation level at time $t$ of the maintained system. $Y=\{Y(t)\}_{t\geq 0}$ is the degradation process of the maintained system. We have to express $Y$ as a function of the underlying degradation process $X$. In \cite{mercier_stochastic_2019}, Mercier and Castro used both $ARD_1$ (Arithmetic Reduction of Degradation) and $ARA_1$ (Arithmetic Reduction of Age) models. 
+
+The $ARD_1$ assumption is that the effect of maintenance is to reduce the level of degradation by a quantity which is proportional to the amount of degradation accumulated since the last maintenance. Let $\rho \in [0,1]$ be the coefficient of proportionality, called the maintenance effect parameter.
+
+Before the first maintenance, both $X$ and $Y$ processes are identical:
+$$\forall t\in [0,\tau_1[, Y(t)=X(t)$$
+
+Let $Y(\tau_1^-)$ be the degradation level just before the first maintenance action, so that $Y(\tau_1^-)=X(\tau_1)$.
+The effect of the first maintenance at $\tau_1$ is to reduce the degradation level $Y(\tau_1^-)$ by a quantity $\rho \ \left[ Y(\tau_1^-)- Y(0)\right]=\rho Y(\tau_1^-)$. Therefore, the degradation level just after $\tau_1$ is
+\begin{equation}
+Y(\tau_1^+)=Y(\tau_1^-)- \rho Y(\tau_1^-)=(1-\rho) Y(\tau_1^-)=(1-\rho) X(\tau_1)
+\label{eq:Ytau1+}
+\end{equation}
+
+After the first maintenance action, the system deteriorates according to $X$ and we have 
+$$\forall\ t\in [\tau_1,\tau_2[,\ Y(t)=Y(\tau_1^+)+ X(t)-X(\tau_1)=X(t)-\rho X(\tau_1)$$
+
+\noindent Just after the second maintenance action, we have
+\begin{eqnarray}
+Y(\tau_2^+) &=& Y(\tau_2^-) - \rho [Y(\tau_2^-) - Y(\tau_1^+)] \label{eq:Ytau2+}\\
+&=& X(\tau_2)-\rho X(\tau_1) - \rho [X(\tau_2)-X(\tau_1)] = (1-\rho) X(\tau_2) \nonumber
+\end{eqnarray}
+
+\noindent By recurrence, it follows that $\forall\ t \in [\tau_j,\tau_{j+1}[$ 
+\begin{equation}
+Y(t)=Y(\tau_{j}^+)+\left[ X(t)-X(\tau_j)\right]
+%=(1-\rho) \Sum\limits_{i=1}^{j-1} \left( X(\tau_{i+1})-X(\tau_i)\right)+\left( X(t)-X(\tau_j)\right)\ \ \ 
+=X(t)-\rho X(\tau_j)
+\label{eq:Y(t)}
+\end{equation}
+
+\noindent The effect of maintenance at time $\tau_j$ is expressed by the degradation jump $Z_j$, difference between the degradation level after and before maintenance
+\begin{equation}
+Z_j = Y(\tau_{j}^+) - Y(\tau_{j}^-) = (1-\rho) X(\tau_j) - \left[ X(\tau_j) - \rho X(\tau_{j-1}) \right] = -\rho \left[X(\tau_{j})-X(\tau_{j-1})\right]
+\label{eq:Z_j}
+\end{equation}
+
+
+\subsection{Observation schemes} 
+\label{section:scheme}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The system is regularly inspected and the degradation levels are measured. Potentially, the degradation level can be measured either at maintenance times (just before and/or just after) and/or between maintenance actions.
+
+Let $n_j$ be the number of observations of degradation levels on $]\tau_j, \tau_{j+1}[$, i.e. between two successive maintenance times. It is possible that $n_j=0$. When $n_j \geq 1$, the corresponding observation times are denoted $t_{j,1} < t_{j,2} <...<t_{j,n_j}$. Let $N=\sum\limits_{j=0}^{k} n_j$, i.e. the total number of observations of the degradation levels between maintenance times.
+
+For observations made at maintenance times, $\forall\ j \in \{1,...,k\}$ let us denote $t_{j-1,n_{j-1}+1}=\tau_j\ =\ t_{j,0}$. Therefore, in $[\tau_j, \tau_{j+1}]$, we  potentially have $n_j+2$ observations, at times $\tau_j\ =\ t_{j,0} < t_{j,1} < t_{j,2} <...< t_{j,n_j} < t_{j,n_j+1} = \tau_{j+1}$. The subscript $j$ in these notations means that $\tau_j$ corresponds to the last observed maintenance time. Consequently,
+
+$$Y(t_{j,0})=Y(\tau_j^+) \hbox{ and } Y(t_{j,n_j+1})=Y(\tau_{j+1}^-)$$
+
+The observations are the degradation levels $Y(t_{j,i})$ at times $t_{j,i}$, $\forall\ j \in \{0,...,k\}$, $\forall i \in\{0,...,n_j+1\}$. 
+Given the independence of increments in the Wiener process, the quantities of interest are the observed degradation increments. 
+The time intervals between observations are denoted $\Delta t_{j,i}=t_{j,i}-t_{j,i-1}, \forall\ j \in \{0,...,k\}, \forall i \in\{1,...,n_j+1\}$.
+Degradation increments are denoted
+$\Delta Y_{j,i}=Y(t_{j,i})-Y(t_{j,i-1}), \forall\ j \in \{0,...,k\}, \forall i \in \{1,...,n_j+1\}$.
+
+The ideal situation is where all the degradation measures can be made, at maintenance times (before and after) and between maintenance times. This situation of complete measurements is called ``first observation scheme'' in the following. In this case, the jumps $Z_j = Y(\tau_{j}^+) - Y(\tau_{j}^-)$ are observed.
+
+\Cref{figure:fig_intro} represents an example of trajectory of the degradation process for the complete observation scheme. In this example, maintenance actions are performed periodically each 5 time units. Each point is an observed degradation level. The blue lines are the successive mean degradation paths after maintenance actions.
+
+In \Cref{figure:fig_intro}, $\forall\ j \in \{0,...,k\}, \ t_{j,n_j+1}=\tau_j=t_{j+1,0}$. $\ Y(\tau_j^-)$  and $Y(\tau_j^+)$ are respectively the degradation levels just before and just after the $j^{th}$ maintenance. Thus, $Y(\tau_j^-)$ is observed just before $Y(\tau_j^+)$ at time $\tau_j$. In the same way, $Y(t_{j,n_j+1})$ is observed just before $Y(t_{j+1,0})$.
+
+\begin{figure}[htbp]
+\centering
+\includegraphics[scale=0.6]{cas1_ale2_details3.pdf} 
+%\includegraphics[scale = 1.4]{cas2b.png} 
+\caption{A trajectory of the degradation process and notations used}
+\label{figure:fig_intro}
+\end{figure}
+
+In practice, it may happen that it is not possible to observe all or part of the degradation levels at maintenance times. In this case of incomplete measurements, the true degradation jumps $Z_j$ cannot be observed. Instead, other kinds of jumps are observed, which will be defined in next section. In this paper, we consider the complete observation scheme as well as three incomplete observation schemes. Thus, four observation schemes are studied. In the $m^{th}$ observation scheme, the observed jump around the $j^{th}$ maintenance is denoted $Z_j^{(m)}$. For the complete observation scheme, $Z_j^{(1)}=Z_j$.
+
+\begin{itemize}
+
+\item {\it First observation scheme (complete)}: The degradation levels are observed just before and just after each maintenance action. 
+
+\item {\it Second observation scheme}: The degradation levels are observed just before each maintenance action but not just after.
+
+\item {\it Third observation scheme}: The degradation levels are observed just after each maintenance action but not just before.
+
+\item {\it Fourth observation scheme}: The degradation levels are not observed neither just before nor just after each maintenance action. 
+
+\end{itemize}
+
+A summary of all the notations used in the paper is given herafter.
+
+
+\subsection{Notations} 
+\label{appendix:nots}
+%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{itemize}
+
+\item $\tau$: last potential observation time.
+
+\item $k$ : number of maintenance actions.
+
+\item $\tau_j$ : maintenance times, $\forall\ j \in \{1,...,k\}$. $\tau_0=0$, $\tau_{k+1}=\tau$.
+
+\item $t_{j,i}$ : times when a degradation level can be observed, $\forall\ j \in \{0,...,k\}\ ,\ \forall\ i \in \{0,...,n_j+1\}$.
+
+\item $n_j$ : number of observations on $]\tau_j,\tau_{j+1}[$.
+
+\item $N=\sum\limits_{j=0}^k n_j$.
+
+\item $n$ : total number of observations on $[0,\tau]$.
+
+\item $\Delta t_{j,i}=t_{j,i}-t_{j,i-1}$: time intervals between observations, $\forall\ i \in \{1,...,n_j+1\}$.
+
+\item $\{X(t)\}_{t\geq 0}$ :  underlying degradation process, without maintenance actions.
+
+\item $\{Y(t)\}_{t\geq 0}$ :  degradation process of the maintained system.
+
+\item $Y(\tau_j^+)=Y(t_{j,0})$ : degradation level just after the $j^{th}$ maintenance action.
+
+\item $Y(\tau_j^-)=Y(t_{j-1,n_{j-1}+1})$ : degradation level just before the $j^{th}$ maintenance action.
+
+\item $\Delta Y_{j,i}=Y(t_{j,i})-Y(t_{j,i-1})$: degradation increments, $\forall\ j \in \{0,...,k\}\ ,\ \forall\ i \in \{1,...,n_j+1\}$.
+
+\item $Z_j^{(m)}$ :  observed degradation jump around the $j^{th}$ maintenance for observation scheme number $m$.
+
+\begin{itemize}[label=\textbullet]
+
+\item $Z_j^{(1)}=Y(\tau_j^+)-Y(\tau_j^-)$. 
+
+\item $Z_j^{(2)}=\Delta Y_{j,1}+Z_j^{(1)}$.
+
+\item $Z_j^{(3)}=Z_j^{(1)}+\Delta Y_{j-1,n_{j-1}+1}$.
+
+\item $Z_j^{(4)}=\Delta Y_{j,1}+Z_j^{(1)}+\Delta Y_{j-1,n_{j-1}+1}$. 
+\end{itemize}
+
+
+\item $f_X$ : density of $X$.
+
+\item $f_{X|Y}$ : conditional density of $X$ given $Y$.
+
+\item $\mathcal{O}^m_{t}$ :  set of observed data before time $t$ for scheme $m$.
+
+\item The random quantities are denoted by uppercase letters and their realizations by lowercase letters. For instance, $\Delta y_{j,i}$ is the observed value of $\Delta Y_{j,i}$.
+
+\end{itemize}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Statistical inference}
+\label{section:stat}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The purpose of this section is to estimate the three parameters of the Wiener-based  $ARD_1$ model under the four observation schemes. Let us recall that $\mu$ is a drift parameter, $\sigma^2$ is a variance parameter and $\rho$ is the maintenance effect parameter.
+
+We use the maximum likelihood method, from the observation of the degradation process on $[0,\tau]$.
+The four observation schemes described previously lead to different writings of the likelihood and therefore to different estimators of the parameters.
+
+There are two kinds of observations, the degradation increments and the observed jumps around maintenance times. Therefore, the likelihood $L(\mu,\sigma^2,\rho)$ has two parts. Thanks to the independence of increments of the Wiener process, the part linked to degradation increments is the product of the densities of these increments. The part linked to degradation jumps is more complex and will be studied in each observation scheme. Finally, a general expression of the likelihood is
+\begin{equation}
+L(\mu,\sigma^2,\rho)= \left[\prod\limits_{j} \ \prod\limits_i f_{\Delta Y_{j,i}} (\Delta y_{j,i}) \right] \ \prod\limits_j\ f_{Z_j^{(m)} \mid \mathcal{O}_{\tau_j^-}^m}(z_j^{(m)})
+\label{eq:likelihood}
+\end{equation}
+\noindent where $\mathcal{O}_{\tau_{j}^-}^m$ is the set of observations just before $\tau_{j}$, i.e. the $\sigma$-algebra generated by the increments and observed jumps before the $j^{th}$ maintenance for the $m^{th}$ observation scheme. Morever, the $\Delta Y_{j,i}$ have a normal distribution $\mathcal{N}(\mu \Delta t_{j,i}\ ,\ \sigma^2 \Delta t_{j,i})$. Therefore, the main problem is to determine in each scheme the conditional distribution of the observed degradation jumps $Z_j^{(m)}$ given the past.
+
+
+\subsection{First observation scheme}
+\label{1case}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+In this complete observation scheme, the degradation levels are both observed just before and just after each maintenance action. A simulated trajectory of the degradation process is presented in \Cref{fig:cas1}. The black dots are the observed degradation levels. 
+In this example, the maintenance actions are made periodically each 5 time units and the observations of the degradation levels between maintenance actions are made periodically each 1 time unit.  Parameter values are $\mu=2$, $\sigma^2=2$ and $\rho=0.5$. $k=3$ maintenance actions are performed, $n=24$ observations of the degradation levels are made and $\forall\ j \in \{0,1,2,3\},\ n_j=4$. The first degradation level $y(t_{0,0})=0$ is considered as an observation.
+
+\begin{figure}[htbp]
+\centering{
+%\includegraphics[width=10 cm, height= 6 cm]{ink_cas1.png} 
+\includegraphics[width=10 cm, height= 6 cm]{figures/cas1.pdf}}
+\caption{First scheme: a trajectory of the degradation process}
+%\caption{degradation levels for $\mu=2$, $\sigma^2=2$, $\rho=0.5$, $n=24$, $k=3$ }
+\label{fig:cas1}
+\end{figure}
+
+All the degradation increments $\Delta Y_{j,i}$ are observed, $\forall\ j \in \{0,...,k\}\ ,\ \forall\ i \in \{1,...,n_j+1\}$. $\forall\ j \in \{0,...,k\}$, the true degradation jumps $Z_j^{(1)}=Z_j$ are observed. Therefore, the likelihood (\ref{eq:likelihood}) is:
+\begin{equation}
+L_1(\mu,\sigma^2,\rho)=\left[\prod\limits_{j=0}^k \ \prod\limits_{i=1}^{n_j+1} f_{\Delta Y_{j,i}} (\Delta y_{j,i})\right] \ \prod\limits_{j=1}^k \ f_{Z_j^{(1)} \mid \mathcal{O}_{\tau_j^-}^1}(z_j^{(1)})
+\label{eq:like_scheme1}
+\end{equation}
+
+\noindent Here $\forall j \in \{1,...,k\}$,\\
+$\mathcal{O}_{\tau_j^-}^1=\{\Delta y_{0,1},...,\Delta y_{0,n_0+1},z_1^{(1)},\Delta y_{1,1},...,,\Delta y_{j-2,n_{j-2}+1},z_{j-1}^{(1)},\Delta y_{j-1,1},...,\Delta y_{j-1,n_{j-1}+1}\}$
+
+\noindent From (\ref{eq:Z_j}), we have for all $j$:
+\begin{equation}
+Z_j^{(1)} = Z_j  = -\rho \left[X(\tau_{j})-X(\tau_{j-1})\right] = -\rho \sum\limits_{i=1}^{n_{j-1}+1} \Delta Y_{j-1,i}
+\end{equation}
+
+\noindent Thus, given $\mathcal{O}^1_{\tau_j^-}$,  $Z_j^{(1)}$ is completely known. $Z_j^{(1)}\mid \mathcal{O}_{\tau_j^-}^1$ follows a Dirac distribution:
+$$f_{Z_j^{(1)}\mid \mathcal{O}_{\tau_j^-}^1}(z_j^{(1)})= \ \mathds{1}_{\left\{z_j^{(1)}=\ -\rho \sum\limits_{i=1}^{n_{j-1}+1} \Delta y_{j-1,i}\right\}}$$
+
+\noindent Therefore, under this complete observation scheme, the model is meaningful only if all the quantities $\frac{z_j^{(1)}}{\sum \limits_{i=1}^{n_{j-1+1}} \Delta y_{j-1,i}}$ are equal (equal to $-\rho$). This obviously seems very unlikely in practical situations. So in the following, we will not consider the estimation of $\rho$. $\mu$ and $\sigma^2$ are estimated by maximizing the likelihood
+\begin{equation}
+L_1 \left(\mu,\sigma^2 \right) 
+=\prod \limits_{j=0}^{k} \  \prod \limits_{i=1}^{n_{j}+1} \ \frac{1}{\sqrt{2 \pi \sigma^2 \Delta t_{j,i}}} \ \exp\left( -\frac{(\Delta y_{j,i}-\mu \Delta t_{j,i})^2}{2\sigma^2 \Delta t_{j,i}} \right)
+\end{equation}
+
+\noindent Straightforward  computations lead to the maximum likelihood estimators of $\mu$ and $\sigma^2$ 
+\begin{equation}
+\hat{\mu}=\frac{\sum \limits_{j=0}^{k}\ \sum\limits_{i=1}^{n_j+1} \Delta Y_{j,i}}{\sum \limits_{j=0}^{k}\ \sum\limits_{i=1}^{n_j+1} \Delta t_{j,i}} = \frac{1}{\tau} \left[Y(\tau)-\sum\limits_{j=1}^{k} Z_j^{(1)}\right]
+\end{equation}
+\begin{equation}
+\hat{\sigma}^2=\frac{1}{{N+k+1}}\sum \limits_{j=0}^{k}\sum\limits_{i=1}^{n_j+1} \frac{\displaystyle(\Delta Y_{j,i}-\hat{\mu}\Delta t_{j,i})^2}{ \displaystyle \Delta t_{j,i}}
+\label{eq:sigma2_cas1}
+\end{equation}
+\noindent Note that $\hat{\mu} = X(\tau)/\tau$, so $\hat{\mu}$ is an unbiased estimator of $\mu$.
+It is also possible to prove that $\tilde{\sigma}^2={\displaystyle\frac{N+k+1}{N+k}}\hat{\sigma}^2 $ is an unbiased estimator of $\sigma^2$ (see proof in Appendix \ref{appendix:bsig1}). 
+
+
+\subsection{Second observation scheme}
+\label{2case}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+In this scheme, the degradation levels just before maintenance actions $Y(\tau_j^-)$ are observed, but the degradation levels just after maintenance actions $Y(\tau_j^+)$ are not observed. This situation is illustrated in \Cref{fig:cas2}. In this figure, we have used the same trajectory of the degradation process as in \Cref{fig:cas1}, but we considered that the degradation levels just after maintenance actions $Y(\tau_j^+)$ are not observed. The jumps at maintenance times and the first degradation increments after maintenance are not observed, so they are represented with dashed lines. The values of the parameters $\mu, \sigma^2,\rho$, the number of maintenance actions $k$ and the number of observations between maintenance actions $\{n_j\}_{0 \leq j \leq 3}$ are the same as in \Cref{fig:cas1}, but the number of observed data is now $n=21$.
+
+\begin{figure}[htbp]
+\centering{
+%\includegraphics[width=10 cm, height= 6 cm]{ink_cas2.png} 
+\includegraphics[width=10 cm, height= 6 cm]{figures/cas2.pdf}} 
+\caption{Second scheme: a trajectory of the degradation process}
+%\caption{degradation levels for $\mu=2$, $\sigma^2=2$, $\rho=0.5$, $n=21$, $k=3$ }
+\label{fig:cas2}
+\end{figure}
+
+The studies in \cite{salles_semiparametric_2020, kamranfar_inference_2021} assume that only the degradation levels just before maintenance actions are observed. This corresponds to this second observation scheme in the particular case where $\forall j,\ n_j=0$.
+In this case, the observed jumps are the only observations 
+$$Z_j^{(2)} = Y(\tau_{j+1}^-) - Y(\tau_{j}^-) = X(\tau_{j+1})- X(\tau_j)-\rho\ \left[  X(\tau_j) - X(\tau_{j-1}) \right]$$
+\noindent which have the $\mathcal{N}\left(\mu  (\tau_{j+1} - \tau_{j})- \mu \rho (\tau_j - \tau_{j-1})\ ,\ \sigma^2 (\tau_{j+1} - \tau_{j}) + \sigma^2 \rho^2 (\tau_j - \tau_{j-1})\right)$ distribution.
+
+\noindent Note that the $\Delta Y_{j,1}$ $\forall j \in \{1,..,k\}$ are not observed but the first increment $\Delta Y_{0,1}$ is observed. Thus, the history of the process at $\tau_j^-$ is
+$\forall j \in \{1,...,k\}$,\\
+$\mathcal{O}_{\tau_j^-}^2=\{\Delta y_{0,1}, \Delta y_{0,2},...,\Delta y_{0,n_0+1},z_{1}^{(2)},\Delta y_{1,2},...,\Delta y_{j-2,n_{j-2}+1},z_{j-1}^{(2)}, \Delta y_{j-1,2},...,\Delta y_{j-1,n_{j-1}+1}\}\ $ 
+
+\noindent The true degradation jumps $Z_j = Y(\tau_{j}^+) - Y(\tau_{j}^-)$ are not observed.
+Instead, the observed jump around the $j^{th}$ maintenance is 
+\begin{align}
+Z_j^{(2)}&= Y(t_{j,1})-Y(\tau_j^-) = Y(t_{j,1})-Y(\tau_j^+)+Y(\tau_j^+)-Y(\tau_j^-) \nonumber \\
+&= \Delta Y_{j,1}+Z_j = \Delta Y_{j,1}-\rho \sum\limits_{i=1}^{n_{j-1}+1} \Delta Y_{j-1,i} \nonumber \\
+&= \Delta Y_{j,1} -\rho \Delta Y_{j-1,1} -\rho \sum\limits_{i=2}^{n_{j-1}+1} \Delta Y_{j-1,i} \label{eq:Zj21}
+\end{align}
+
+In the likelihood, we need to compute the conditional density of $Z_j^{(2)}$ given $\mathcal{O}_{\tau_j^-}^2$. Since $\Delta Y_{j-1,1}$ is not independent of $\mathcal{O}_{\tau_j^-}^2$, the computation of this conditional distribution could be complex.
+
+\noindent However, the computation can be simplified in this case because, thanks to the properties of the $ARD_1$ model, the missing value $Y(\tau_j^+)$ can be expressed as a function of the already observed values and $\rho$.
+
+\noindent At time zero, $Y(\tau_0)=0$. From (\ref{eq:Ytau1+}), $Y(\tau_1^+) = (1-\rho)\ Y(\tau_1^-)$. From (\ref{eq:Ytau2+}), 
+$$Y(\tau_2^+)= Y(\tau_2^-)-\rho\ \left[ Y(\tau_2^-)-Y(\tau_1^+)\right]= (1-\rho) Y(\tau_2^-)+\rho\ (1-\rho)\ Y(\tau_1^-)$$
+
+%Y(\tau_3^+)&=Y(\tau_3^-)-\rho\ \left( Y(\tau_3^-)-Y(\tau_2^+)\right)= (1-\rho) Y(\tau_3^-)+\rho\ (1-\rho)\ Y(\tau_2^-) +\rho^2 \ (1-\rho)\ Y(\tau_1^-)\\
+
+\noindent By recurrence, it follows that $\forall\ j \in \{1,...,k\}$ 
+\begin{equation}
+Y(\tau_j^+)= (1-\rho) \sum \limits_{i=0}^{j} \ \rho^{j-i} \ Y(\tau_i^-)
+\end{equation}
+
+\noindent Therefore, $\forall\ j \in \{1,...,k\}$, the observed jump $Z_j^{(2)}$ can be written
+\begin{align}
+Z_j^{(2)} &= \Delta Y_{j,1} + Y(\tau_j^+)-Y(\tau_j^-) 
+= \Delta Y_{j,1} + (1-\rho) \sum \limits_{i=0}^{j} \ \rho^{j-i} \ Y(\tau_i^-) -Y(\tau_j^-) \nonumber\\
+&= \Delta Y_{j,1} - \rho Y(\tau_j^-) + (1-\rho) \sum \limits_{i=0}^{j-1} \ \rho^{j-i} \ Y(\tau_i^-)  \label{eq:Zj22}
+%Z_j^{(2)}=Y(\tau_j^+)-Y(\tau_j^-)= -\rho \ Y(\tau_j^-)+\ (1-\rho)\ \sum \limits_{i=0}^{j-1} \ \rho^{j-i} \ Y(\tau_i^-)
+\end{align}
+
+\noindent Equation (\ref{eq:Zj22}) is much easier to use than (\ref{eq:Zj21}) because $\Delta Y_{j,1}$ is independent of $\mathcal{O}_{\tau_j^-}^2$ and conditionnally to $\mathcal{O}_{\tau_j^-}^2$, the $Y(\tau_i^-)\ $ for $ i \leq j$ are observed. So the conditional distribution of $Z_j^{(2)}$ given $\mathcal{O}_{\tau_j^-}^2$ is the $\mathcal{N}\left(\mu \ \Delta t_{j,1} -\rho\  y(\tau_j^-)+(1-\rho)\ \sum\limits_{i=1}^{j-1} \rho^{j-i}\ y(\tau_i^-),\ \sigma^2 \Delta t_{j,1}\right)$ distribution.
+
+\noindent Finally, the likelihood for the second observation scheme is
+\begin{equation}
+L_2\left(\mu,\sigma^2,\rho \right)
+= \left[\prod \limits_{j=0}^{k} \ \  \prod \limits_{i=1+\mathds{1}_{j>0}}^{n_{j}+1} f_{\Delta Y_{j,i}}(\Delta y_{j,i})\right] \ \prod \limits_{j=1}^{k}\ f_{Z_j^{(2)}\mid \mathcal{O}_{\tau_j^-}^2}\left( z_j^{(2)}\right)
+\label{eq:like_scheme2}
+\end{equation}
+
+\noindent From \Cref{eq:Zj22}, for all $j$, $z_j^{(2)} - \mu \ \Delta t_{j,1} +\rho\  y(\tau_j^-)-(1-\rho)\ \sum\limits_{i=1}^{j-1} \rho^{j-i}\ y(\tau_i^-) = y(t_{j,1})  - \mu \ \Delta t_{j,1} -(1-\rho)\ \sum\limits_{i=1}^{j} \rho^{j-i}\ y(\tau_i^-)$. Therefore, the log-likelihood is derived as
+\begin{align}
+\ln L_2\left(\mu,\sigma^2,\rho \right)=&- \frac{N+k+1}{2} \ln \sigma^2 + c_1
+- \frac{1}{2 \sigma^2} \bigg[\sum\limits_{j=0}^{k}\ \ \sum\limits_{i=1+\mathds{1}_{j>0}}^{n_j+1}
+\frac{\left(\Delta y_{j,i} -\mu \Delta t_{j,i}\right)^2}{\Delta t_{j,i}} \nonumber\\
+&+ \sum\limits_{j=1}^{k}\ \frac{1}{\Delta t_{j,1}}
+\left(y(t_{j,1})-\mu \Delta t_{j,1}-(1-\rho)\sum\limits_{i=0}^{j}\rho^{j-i}y(\tau_i^-)\right)^2 \Bigg]
+\label{eq:loglike_scheme2}
+\end{align}
+\noindent where $c_1$ is a constant.
+
+%\begin{align}
+%Log\ L_2\left(\mu,\sigma^2,\rho \right)=&\ \Sum\limits_{j=0}^{k}\ \ \Sum\limits_{i=1+\mathds{1}_{j>0}}^{n_j+1} \left[ log\left(\frac{1}{\sqrt{2\pi\sigma^2\Delta t_{j,i}}}\right)-\frac{\left(\Delta y_{j,i} -\mu \Delta t_{j,i}\right)^2}{2 \sigma^2 \Delta t_{j,i}}\right] \nonumber\\
+%&+\Sum\limits_{j=1}^{k}\  \left[log\left(\frac{1}{\sqrt{2\pi\sigma^2\Delta t_{j,1}}}\right) -\frac{\left(y(t_{j,1})-\mu \Delta t_{j,1}-(1-\rho)\sum\limits_{i=1}^{j}\rho^{j-i}y(\tau_i^-))\right)^2}{2 \sigma^2 \Delta t_{j,1}}\right]
+%\end{align}
+\vspace{3mm}
+
+\noindent Deriving the log-likelihood, the maximum likelihood estimators $\hat{\mu}$, $\hat{\sigma}^2$ and $\hat{\rho}$ are obtained as the solutions of the likelihood equations system, as follows.
+
+\begin{equation}
+\hat{\mu} = \frac{1}{\tau} \left[ Y(\tau)+ \hat{\rho} \sum\limits_{j=1}^{k} Y(\tau_j^-) -(1-\hat{\rho})\sum\limits_{j=1}^{k} \sum\limits_{i=0}^{j-1}\hat{\rho}^{j-i}Y(\tau_i^-)\right]
+\label{eq:mle_mu2}
+\end{equation}
+
+
+\begin{equation}
+\hat{\sigma}^2 = \frac{1}{N+k+1} \left[ \sum\limits_{j=0}^{k}\ \sum\limits_{i=1+\mathds{1}_{j>0}}^{n_j+1}\frac{\left(\Delta Y_{j,i} -\hat{\mu}\ \Delta t_{j,i}\right)^2}{\Delta t_{j,i}}+\sum\limits_{j=1}^{k} \frac{\left(Y(t_{j,1})-\hat{\mu}\ \Delta t_{j,1}-(1-\hat{\rho})\sum\limits_{i=0}^{j}\hat{\rho}^{j-i}Y(\tau_i^-)\right)^2}{\Delta t_{j,1}}\right]
+\label{estimsigk1} 
+\end{equation}
+
+
+\begin{equation}
+\sum \limits_{j=1}^k \frac{1}{\Delta t_{j,1}}\left[\sum\limits_{i=0}^{j}\hat{\rho}^{j-i-1} Y(\tau_i^-) [(1-\hat{\rho})(j-i) - \hat{\rho}] \right]  \left[Y(t_{j,1})-\hat{\mu} \Delta t_{j,1}-(1-\hat{\rho})\sum\limits_{i=0}^{j}\hat{\rho}^{j-i} Y(\tau_i^-) \right]=0 
+\end{equation}
+
+\noindent One can easily show that  (proof in Appendix \ref{appendix:mle_mu2})
+\begin{equation}
+\hat{\mu} = \frac{1}{\tau} \sum\limits_{j=1}^{k+1} \hat{\rho}^{k-j+1}\ Y(\tau_j^-) 
+\label{estimmuk1}
+\end{equation}
+
+These estimators can equivalently be obtained using the profile likelihood method. The maximum likelihood estimator $\hat\rho$ is equal to $\arg\max_{\rho} \ln L_2(\hat\mu(\rho),\hat\sigma^2(\rho),\rho)$ where $\hat\mu(\rho)$ and $\hat\sigma^2(\rho)$ are obtained using \Cref{estimmuk1,estimsigk1}  replacing $\hat\rho$ and $\hat\mu$ by $\rho$ and $\hat\mu(\rho)$.
+Using \Cref{estimsigk1,eq:loglike_scheme2}, one can easily show that the profile log-likelihood can be written 
+
+$$ \ln\ L_2(\hat\mu(\rho),\hat\sigma^2(\rho),\rho)= - \frac{N+k+1}{2} \left[\ln\ \hat\sigma^2 (\rho) +1 \right] +c_1$$
+Then, the maximum likelihood estimator of $\rho$ can be viewed as the value of $\rho$ that minimizes the estimated variance of the underlying degradation process when $\rho$ is assumed to be known.
+
+\subsection{Third observation scheme}
+\label{3case}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+In this scheme, the degradation levels just after maintenance actions $Y(\tau_j^+)$ are observed, but the degradation levels just before maintenance actions $Y(\tau_j^-)$ are not observed. This situation is illustrated in \Cref{fig:cas3}. As for \Cref{fig:cas2}, we have used the same trajectory of the degradation process as in \Cref{fig:cas1}, but we considered that the degradation levels just before maintenance actions $Y(\tau_j^-)$ are not observed. This is illustrated by dashed lines in \Cref{fig:cas3}. In order to keep the notations homogeneous, we also assume that the last degradation level $Y(\tau)$ is not observed, so the last observation is $Y(t_{k,n_k})$.
+The values of $\mu, \sigma^2,\rho$, $k$ and $\{n_j\}_{0 \leq j \leq 3}$ are the same as before, but the number of observed data is now $n=20$.
+
+
+\begin{figure}[htbp]
+\centering
+%\includegraphics[width=10 cm, height= 6 cm]{ink_cas3.png} 
+\includegraphics[width=10 cm, height= 6 cm]{figures/cas3.pdf} 
+\caption{Third scheme: a trajectory of the degradation process}
+\label{fig:cas3}
+\end{figure}
+
+Here, none of the $\Delta Y_{j,n_j+1}$ $\forall j \in \{1,..,k\}$ is observed. In this case, the history of the process at $\tau_j^-$ is also the history of the process at $t_{j-1,n_{j-1}}$:
+$\forall j \in \{1,...,k\}$,\\
+$\mathcal{O}_{\tau_j^-}^3=\mathcal{O}_{t_{j-1,n_{j-1}}}^3=\{\Delta y_{0,1},...,\Delta y_{0,n_0},z_{1}^{(3)},\Delta y_{1,1},...,\Delta y_{j-2,n_{j-2}},z^{(3)}_{j-1},\Delta y_{j-1,1},...,\Delta y_{j-1,n_{j-1}}\}$
+
+\noindent The true degradation jumps $Z_j = Y(\tau_{j}^+) - Y(\tau_{j}^-)$ are not observed.
+Instead, the observed jump around the $j^{th}$ maintenance is 
+\begin{align}
+Z_j^{(3)} &= Y(\tau_j^+)-Y(t_{j-1,n_{j-1}}) = Y(\tau_j^+)-Y(\tau_j^-)+Y(\tau_j^-)-Y(t_{j-1,n_{j-1}}) \nonumber \\
+&= Z_j +\Delta Y_{j-1,n_{j-1}+1} = -\rho\sum\limits_{i=1}^{n_{j-1}+1}\Delta Y_{j-1,i} + \Delta Y_{j-1,n_{j-1}+1} \nonumber \\
+&= -\rho\sum\limits_{i=1}^{n_{j-1}}\Delta Y_{j-1,i} + (1-\rho)\ \Delta Y_{j-1,n_{j-1}+1} \label{eq:Zj3}
+\end{align}
+
+\noindent $\Delta Y_{j-1,n_{j-1}+1}$ is independent of $\mathcal{O}_{\tau_j^-}^3$. So the conditional distribution of $Z_j^{(3)}$ given $\mathcal{O}_{\tau_j^-}^3$ is the $\mathcal{N}\left(\mu (1-\rho) \Delta t_{j-1,n_{j-1}+1}-\rho \sum\limits_{i=1}^{n_{j-1}} \Delta y_{j-1,i}\ ,\ \sigma^2 (1-\rho)^2 \Delta t_{j-1,n_{j-1}+1}\right)$ distribution.
+
+\noindent Finally, the likelihood for the third observation scheme is
+\begin{equation}
+L_3\left(\mu,\sigma^2,\rho \right)
+= \left[ \prod \limits_{j=0}^{k} \ \prod \limits_{i=1}^{n_{j}}  f_{\Delta Y_{j,i}}(\Delta y_{j,i}) \right]\ 
+ \prod \limits_{j=1}^{k}\ f_{Z_j^{(3)} \mid  \mathcal{O}_{t_{j-1,n_{j-1}}}^3}(z_j^{(3)}) 
+\label{eq:like_scheme3}
+\end{equation}
+\noindent The log-likelihood is derived as
+\begin{align}
+&\ln L_3\left(\mu,\sigma^2,\rho \right)= - \frac{N+k}{2} \ln \sigma^2 + c_2 - k \ln (1-\rho)
+- \frac{1}{2 \sigma^2} \Bigg[\sum\limits_{j=0}^{k}\ \ \sum\limits_{i=1}^{n_j}
+\frac{\left(\Delta y_{j,i} -\mu \Delta t_{j,i}\right)^2}{\Delta t_{j,i}} \nonumber\\
+&+ \frac{1}{(1-\rho)^2} \sum\limits_{j=1}^{k}\ \frac{1}{\Delta t_{j-1,n_{j-1}+1}}
+\left(z_j^{(3)}-\mu (1-\rho)\Delta t_{j-1,n_{j-1}+1}+\rho \sum \limits_{i=1}^{n_{j-1}}\Delta y_{j-1,i}\right)^2 \Bigg]
+\label{eq:loglike_scheme3}
+\end{align}
+\noindent where $c_2$ is a constant.
+
+\vspace{3mm}
+
+\noindent Deriving the log-likelihood, the maximum likelihood estimators $\hat{\mu}$ and $\hat{\sigma^2}$ are obtained as the solutions of the likelihood equations system, as follows.
+
+
+\begin{equation}
+\hat{\mu} = \frac{1}{t_{k,n_{k}}} \left[ \sum\limits_{j=0}^{k}\ \sum\limits_{i=1}^{n_j}\Delta Y_{j,i}\ +\ \frac{1}{1-\hat{\rho}}\ \sum\limits_{j=1}^{k} \left(Z_j^{(3)}+\hat{\rho} \sum \limits_{i=1}^{n_{j-1}}\Delta Y_{j-1,i}\right)\right]
+\label{eq:mle_mu3}
+\end{equation}
+
+
+\begin{equation}
+\hat{\sigma^2} =\frac{1}{N+k} \left[\sum\limits_{j=0}^{k}\ \sum\limits_{i=1}^{n_j} \frac{(\Delta Y_{j,i}-\hat{\mu}\ \Delta t_{j,i})^2}{\Delta t_{j,i}}
++ \sum\limits_{j=1}^{k} \frac{\left(Z_j^{(3)}-\hat{\mu}\ (1-\hat{\rho})\Delta t_{j-1,n_{j-1}+1}+\hat{\rho} \sum \limits_{i=1}^{n_{j-1}}\Delta Y_{j-1,i}\right)^2}{(1-\rho)^2 \Delta t_{j-1,n_{j-1}+1}}\right]
+\end{equation}
+
+\noindent One can show that $\hat\mu$ can also be written (see Appendix \ref{appendix:mle_mu3})
+$$ \hat\mu=\frac{1}{t_{k,n_k}} \left[Y(t_{k,n_k})+\frac{\hat\rho}{1-\hat\rho}Y(\tau_k^+)\right]$$
+
+For $\hat{\rho}$, the derivation of the log-likelihood leads to an expression too complex to be given here. Therefore we directly use the profile likelihood method.
+As in the previous sub-section, $\hat\rho=argmax_{\rho} \ln L_3\ (\hat{\mu}(\rho),\hat{\sigma}^2(\rho),\rho)$, where the profile log-likelihood is 
+
+\begin{equation}
+\ln L_3\ (\hat{\mu}(\rho),\hat{\sigma}^2(\rho),\rho) = -\frac{1}{2} (N+k) \left[ \ln\ \hat{\sigma}^2(\rho) +1 \right]- k\ \ln\ (1-\rho) + c_2 
+\end{equation}
+\noindent{where $\hat\mu(\rho)$ and  $\hat{\sigma}^2(\rho)$ are obtained similarly as in the previous sub-section.}
+
+\vspace{3 mm}
+
+By analogy with \cite{salles_semiparametric_2020, kamranfar_inference_2021} one could assume that only the degradation levels just after maintenance actions are observed. This corresponds to this third observation scheme where $\forall j, n_j=0$.
+In this case, the observed jumps are the only observations 
+$$Z_j^{(3)} = Y(\tau_j^+) - Y(\tau_{j-1}^+) = (1-\rho) \Delta Y_{j-1,1}$$
+\label{eq:logp3}
+\noindent which have the $\mathcal{N}\left(\mu (1-\rho) (\tau_j - \tau_{j-1})\ ,\ \sigma^2 (1-\rho)^2 (\tau_j - \tau_{j-1})\right)$ distribution.
+
+\noindent Therefore, different $(\mu, \sigma^2, \rho)$ triplets will lead to the same observations, so the model is not identifiable. The problem is due to the fact that a Gaussian random variable multiplied by a (positive) constant is still Gaussian. Similar properties hold for Gamma and Inverse Gaussian distributions, so the identifiability problem will also occur when the underlying degradation process is Gamma or Inverse Gaussian. Note that this problem does not appear for the second observation scheme.
+
+
+
+\subsection{Fourth observation scheme}
+\label{4case}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+In this last scheme, neither $Y(\tau_j^-)$ nor $Y(\tau_j^+)$ are observed. This situation is illustrated in \Cref{fig:cas4}. As before, the last observation is $Y(t_{k,n_k})$.
+The values of $\mu, \sigma^2,\rho$, $k$ and $\{n_j\}_{0 \leq j \leq 3}$ are the same as before, but the number of observed data is now $n=17$.
+
+
+\begin{figure}[h!]
+%\includegraphics[width=10 cm, height= 6 cm]{ink_cas4.png} 
+\includegraphics[width=10 cm, height= 6 cm]{figures/cas4.pdf} 
+\centering
+\caption{Fourth observation scheme : a trajectory of the degradation process}
+\label{fig:cas4}
+\end{figure}
+
+
+It is assumed that there is at least one observation between two successive maintenance actions : $\forall\ j \in \{0,...,k\},\ n_j \geq 1$.
+Here, neither the $\Delta Y_{j,1}$ (except the first one) nor the $\Delta Y_{j,n_j+1}$ are  observed. In this case, the history of the process at $\tau_j^-$ or $t_{j-1,n_{j-1}}$ is
+$\forall j \in \{1,...,k\}$,\\
+$\mathcal{O}_{\tau_j^-}^4=\mathcal{O}_{t_{j-1,n_{j-1}}}^4=\{\Delta y_{0,1},...,\Delta y_{0,n_0},z_{1}^{(4)},\Delta y_{1,2},...,\Delta y_{j-2,n_{j-2}},z_{j-1}^{(4)},\Delta y_{j-1,2},...,\Delta y_{j-1,n_{j-1}}\}$
+
+
+\noindent The true degradation jumps $Z_j = Y(\tau_{j}^+) - Y(\tau_{j}^-)$ are not observed.
+Instead, the observed jump around the $j^{th}$ maintenance action is 
+\begin{align}
+Z_j^{(4)}&= Y(t_{j,1})-Y(t_{j-1,n_{j-1}})
+=Y(t_{j,1})-Y(\tau_j^+)+Y(\tau_j^+)-Y(\tau_j^-)+Y(\tau_j^-)-Y(t_{j-1,n_{j-1}}) \nonumber\\
+&=\Delta Y_{j,1}+Z_j +\Delta Y_{j-1,n_{j-1}+1} \nonumber\\
+&=\Delta Y_{j,1}-\rho \sum\limits_{i=1}^{n_{j-1}+1} \Delta Y_{j-1,i}+\Delta Y_{j-1,n_{j-1}+1}\nonumber\\
+&=\Delta Y_{j,1}-\rho \sum\limits_{i=2}^{n_{j-1}} \Delta Y_{j-1,i}-\rho\ \Delta Y_{j-1,1}+(1-\rho)\Delta Y_{j-1,n_{j-1}+1}
+\label{eq:zj4}
+\end{align}
+
+\noindent $\Delta Y_{j,1}$ and $\Delta Y_{j-1,n_{j-1}+1}\ $ are independent of $\mathcal{O}_{t_{j-1,n_{j-1}}}^4$. But $Z_j^{(4)}$ and $\ Z_{j-1}^{(4)}$ share the same unobserved increment $\Delta Y_{j-1,1}$, so $\Delta Y_{j-1,1}$ is not independent of $\mathcal{O}_{t_{j-1,n_{j-1}}}^4$. Therefore, the conditional distribution of $Z_j^{(4)}$ given $\mathcal{O}_{t_{j-1,n_{j-1}}}^4$ is not easy to derive.
+
+\noindent In fact, it is easier here to use the joint distribution of the observed jumps given the observed increments. Let $\mathcal{O}_4$ be the set of all observed increments
+$$\mathcal{O}^4=\left\{\Delta y_{0,1},\{\Delta y_{j,i}\}_{ 0 \leq j \leq k,\ 2 \leq i \leq n_j }\right\}$$
+
+\noindent The likelihood can be written
+\begin{equation}
+L_4\left(\mu,\sigma^2,\rho \right)
+=\left[\prod \limits_{j=0}^{k}\prod\limits_{i=1+\mathds{1}_{j>0}}^{n_j}f_{\Delta Y_{j,i}}\left(\Delta y_{j,i}\right) \right]  f_{Z^{(4)} \mid \mathcal{O}^4}\left(z_{1}^{(4)},z_{2}^{(4)},...,z_k^4\right) 
+\label{eq:like_scheme4}
+\end{equation}
+\noindent where $f_{Z^4 \mid \mathcal{O}^4}$ is the conditional density of the observed jumps given the observed increments. Since the $Z_j^{(4)}$ are linear combinations of independent normal random variables, $f_{Z^4 \mid \mathcal{O}^4}$ is the density of a Gaussian vector. Therefore, we have to compute the expectation and covariance matrix of this vector.
+
+%$\Delta Y_{j,1},\ \Delta Y_{j-1,1}\ \text{ and }\ \Delta Y_{j-1,n_{j-1}+1}\ $ are independent and follow normal distributions so that\  $\forall\ j \in \{1,...,k\},\ $ each element of the vector $Z_j^{(4)}\mid \mathcal{O}_{t_{j-1,n_{j-1}}}^4$ (i.e. the vector $Z^4 \mid \mathcal{O}^4=\left(z_{1}^{(4)}\mid \mathcal{O}_{t_{0,n_{0}}}^4,z_{2}^{(4)}\mid \mathcal{O}_{t_{1,n_{1}}}^4,...,Z_k^4\mid \mathcal{O}_{t_{k-1,n_{k-1}}}^4\right)$ )  follow a Gaussian distribution, so the vector is a linear combination of Gaussian random variables and $Z_j^{(4)}\mid \mathcal{O}_{t_{j-1,n_{j-1}}}^4$ is Gaussian.\\
+
+\noindent From (\ref{eq:zj4}), the conditional expectation of $Z_j^{(4)}$ is, $\forall\ j \in \{1,...,k\} $
+\begin{equation}
+\mathbb{E}\left[Z_j^{(4)} \mid \mathcal{O}^4\right] = \mu u_j(\rho) - v_j(\rho)
+\label{eq:espzj4}
+\end{equation}
+
+\noindent where $\forall j$,
+\begin{align*}
+u_j(\rho) &= \Delta t_{j,1}-\rho \Delta t_{j-1,1} \mathds{1}_{j>1}+(1-\rho)\Delta t_{j-1,n_{j-1}+1}\\
+v_j(\rho) &= \rho \sum\limits_{i=1+\mathds{1}_{j>1}}^{n_{j-1}} \Delta y_{j-1,i}
+\end{align*}
+
+\noindent From (\ref{eq:zj4}), the conditional variance of $Z_j^{(4)}$ is, $\forall\ j \in \{1,...,k\}$
+\begin{equation}
+\mathbb{V}ar\left[Z_j^{(4)} \mid \mathcal{O}^4\right]= \sigma^2 s_j(\rho)
+\label{eq:varzj4}
+\end{equation}
+\noindent where $\forall j$,
+$$s_j(\rho) = \Delta t_{j,1}+\rho^2 \Delta t_{j-1,1} \mathds{1}_{j>1}+(1-\rho)^2 \Delta t_{j-1,n_{j-1}+1}$$
+
+\noindent The conditional covariance of $(Z_{j-1}^{(4)},Z_j^{(4)})$ is, $\forall\ j \in \{2,...,k\}$
+\begin{align}
+&Cov\left(Z_{j-1}^{(4)},\ Z_j^{(4)} \mid \mathcal{O}^4  \right)
+= \ Cov (\Delta Y_{j-1,1}-\rho \sum\limits_{i=2}^{n_{j-2}} \Delta y_{j-2,i}-\rho\ \Delta Y_{j-2,1} +(1-\rho)\Delta Y_{j-2,n_{j-2}+1},\nonumber\\
+& \phantom{Cov\left(Z_{j-1}^4,\ Z_j^{(4)} \mid \mathcal{O}^4  \right)
+=}\Delta Y_{j,1} -\rho \sum\limits_{i=2}^{n_{j-1}} \Delta  y_{j-1,i}-\rho\ \Delta Y_{j-1,1} 
++(1-\rho)\Delta Y_{j-1,n_{j-1}+1} ) \nonumber\\
+&= \ Cov(-\rho\ \Delta Y_{j-1,1}\ ,\ \Delta Y_{j-1,1}) =-\rho\ \mathbb{V}ar [ \Delta Y_{j-1,1}] 
+= -\rho\ \sigma^2 \Delta t_{j-1,1}
+\end{align}
+
+\noindent Let us define 
+$u(\rho)^t = (u_1(\rho),u_2(\rho),...,u_{k}(\rho)) $ and similarly $v(\rho)^t$ and $s(\rho)^t$.
+
+\noindent Finally, the conditional distribution of $Z^{(4)}$ given $\mathcal{O}^4$ is the multivariate normal distribution $\mathcal{N}(\mu\ u(\rho) -\rho\ v(\rho)\ , \ \sigma^2\ \Sigma(\rho))$ 
+where
+\\
+
+$ \Sigma(\rho)=$
+$\begin{pmatrix} 
+s_1(\rho) & -\rho \Delta t_{1,1} & 0 & \cdots&\cdots &  \cdots &\cdots & 0\\ 
+-\rho \Delta t_{1,1} & s_2(\rho) & -\rho \Delta t_{2,1}  &0&& & & \\
+0&-\rho \Delta t_{2,1} & s_3(\rho) & -\rho \Delta t_{3,1}  &0& & & \\
+&&&&&&\\
+\vdots&&\ddots&\ddots & \ddots & \ddots  &\ddots & \vdots\\
+&&&&&&\\
+&&&&0&-\rho \Delta t_{k-2,1} & s_{k-1}(\rho) & -\rho \Delta t_{k-1,1}  \\
+
+0&\cdots& \cdots& \cdots& \cdots&0& -\rho \Delta t_{k-1,1} &s_{k}(\rho)
+
+\end{pmatrix}$\\[1.3 cm]
+
+
+\noindent The log-likelihood is derived as
+
+\begin{align}
+&\ln\ L_4\left(\mu,\sigma^2,\rho \right)=\ -\frac{N}{2} \ln \sigma^2 + c_3 - \ln \sqrt{\det \Sigma(\rho)} \nonumber\\
+&-\frac{1}{2\sigma^2}\Bigg[(z^{(4)}-\mu u (\rho)+ v(\rho))^t \ \Sigma(\rho)^{-1} \ (z^{(4)}-\mu u(\rho) + v(\rho))
+&+\sum\limits_{j=0}^{k}\ \sum\limits_{i=1+\mathds{1}_{j>0}}^{n_j} \frac{(\Delta y_{j,i}-\mu \Delta t_{j,i})^2}{\Delta t_{j,i}} \Bigg]
+\label{eq:like_scheme4}
+\end{align}
+\noindent where $c_3$ is a constant.
+
+\vspace{3mm}
+
+
+
+\noindent Deriving the log-likelihood, the maximum likelihood estimators $\hat{\mu}$ and $\hat{\sigma^2}$ are obtained as the solutions of the likelihood equations system, as follows.
+
+
+\begin{equation}
+\hat{\mu}=\frac{u^t(\hat{\rho}) \ \Sigma^{-1}(\hat{\rho}) \ z^{(4)} + u^t(\hat{\rho}) \ \Sigma^{-1}(\hat{\rho}) \ v(\hat{\rho}) + \sum\limits_{j=0}^{k}\ \sum\limits _{i=1+\mathds{1}_{j>0}}^{n_j} \Delta Y_{j,i}}{u^t(\hat{\rho}) \Sigma^{-1}(\hat{\rho}) u(\hat{\rho})+ \sum\limits_{j=0}^{k}\ \sum\limits _{i=1+\mathds{1}_{j>0}}^{n_j}\Delta t_{j,i}}
+\end{equation}
+
+
+\begin{equation}
+\hat{\sigma^2}=\frac{1}{N} \left[(z^{(4)}-\hat{\mu}\ u(\hat{\rho}) + v(\hat{\rho}))^t \ \Sigma^{-1}(\hat{\rho}) \ (z^{(4)}-\hat{\mu}\ u(\hat{\rho})+ v(\hat{\rho}))+ \sum\limits_{j=0}^{k}\ \sum\limits _{i=1+\mathds{1}_{j>0}}^{n_j}\frac{(\Delta Y_{j,i}-\hat{\mu}  \Delta t_{j,i})^2}{\Delta t_{j,i}} \right]
+\end{equation}
+
+\noindent As in the previous sub-section, the profile log-likelihood is derived as
+
+\begin{align}
+\ln\ L_4\left(\hat\mu(\rho),\hat\sigma^2(\rho),\rho \right)=\ -\frac{N}{2} (1+ \ln \hat\sigma^2(\rho)) + c_3 - \ln \sqrt{\det \Sigma(\rho)} 
+\end{align}
+
+ %[~\ref{appendix:mu4}]:
+
+
+\noindent Therefore, $\hat{\rho}=\underset{\rho}{argmin} \Bigg[ \frac{N}{2}  \ln \hat\sigma^2(\rho) + \ln \sqrt{\det \Sigma(\rho)} \Bigg]$
+
+
+
+\section{Quality and comparison of the estimators}
+\label{section:simu}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+This section presents the results of an experimental study
+which aims to assess the quality of the proposed estimators and to compare the four observation schemes.
+
+Several situations are studied in order to assess the influence on the estimation quality of
+\begin{itemize}
+\item the number $n_j$ and location of observations between two successive maintenance actions,
+\item the number of maintenance actions $k$,
+\item the maintenance efficiency parameter $\rho$.
+\end{itemize}
+
+For each situation, the same 5000 simulated trajectories of the degradation process are used for each observation scheme. In each case, the model parameters $\rho$, $\mu$ and $\sigma^2$ are estimated.
+
+In this section, the figures represent the boxplots of the distributions of the estimates for each parameter.
+The observation schemes are represented from left to right by colors (1: green, 2: orange, 3: blue, 4: magenta). The red dashed lines represent the true value of the parameters. Let us recall that there is no estimation of $\rho$ for the first observation scheme. 
+
+
+For the first observation scheme, the degradation levels are observed periodically each one time unit.
+In the first two sub-sections, the three other observation schemes are obtained by removing some observations from the first scheme (see \Cref{fig:cas1,fig:cas2,fig:cas3,fig:cas4}).
+The effect of this loss of information on the quality on the estimators is studied. 
+
+In the third sub-section, for each situation, the total number of observations $n$ is the same for the four observation schemes.  It allows to compare the quality of estimation for each observation scheme for a given size of data.
+
+
+For a given situation, the $\{n_j\}_{j\in \{0,...,k\}}$ are all equal and the maintenance times $\tau_j$ are periodic.
+The underlying degradation process is the same in each case with $\mu=2$ and $\sigma^2=5$.
+The different features used for the simulations are given  in \mbox{\Cref{table:para}}. 
+
+
+
+\begin{table} [!h]
+\caption{Summary of the different features used for the simulations}
+\centering
+\label{table:para}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
+\hline
+Situation & Figure& $\mu$ & $\sigma^2$ & $\rho$ & $n_j$ & $k$ & $n$  & Maintenance period\\
+\hline
+1&\ref{estim1} & 2&5&0.5&2&3&-&6\\
+2&\ref{estim2}&2 &5 &0.5 &5 &3&-&6  \\
+3&\ref{estim5} &2&5&0.5&2&7&-&6\\
+4&\ref{estim3}&2 &5 &0.1 &2 &7&-&6 \\
+5&\ref{estim4} &2 & 5& 0.9& 2& 7&-&6\\
+6&\ref{fig:convergences} &2&5&0.5&-&7&16&10\\
+7&\ref{fig:convergences3}&2&5&0.5&-&7&16&10\\
+\hline
+\end{tabular}
+\end{table}
+
+Thereafter, one will notice that the estimator $\hat \rho$ can be less than $0$ or greater than $1$. In practice, these situations could mean that the maintenance actions degrades the system ($\hat \rho<0$), or, on the contrary, make the system even better than it was initially ($\hat \rho>1$). However, these possibilities are not discussed in this paper. The rare observed values of $\hat{\rho}$ less than zero or greater than one correspond to side effects in the optimization procedure. To avoid them, it is still possible to constrain the estimations of $ \rho $ to belong to $[0,1]$. 
+
+
+
+
+\subsection{Influence of the number of observations}
+
+
+In situations 1 to 3 (\Cref{estim1,estim2,estim5}), the maintenance efficiency parameter $\rho$ is the same, which allows to assess the effect of 
+\begin{itemize}
+\item the number of observations between two successive maintenance actions, by comparing  \Cref{estim1} ($n_j=2$) and \Cref{estim2} ($n_j=5$),
+\item the number of maintenance actions, by comparing \Cref{estim1} ($k=3$) and \Cref{estim5} ($k=7$),
+\item the loss of information related to the observation schemes, by comparing the boxplots inside each figure.
+
+\end{itemize}
+
+
+\begin{figure}[h!]
+\begin{multicols}{3}
+
+\includegraphics[scale=0.5]{figures/3maint-2nj/estim_mu_p2.png}
+\columnbreak
+\includegraphics[scale=0.5]{figures/3maint-2nj/estim_sigma2_p2.png}  
+\columnbreak
+\includegraphics[scale=0.5]{figures/3maint-2nj/estim_rho_p2.png}  
+\end{multicols} 
+\vspace{-6mm}
+\caption{Estimation of $\mu$, $\sigma^2$ and $\rho$, situation 1}
+
+\label{estim1}
+\end{figure}
+
+\begin{figure}[h!]
+\begin{multicols}{3}
+
+
+\includegraphics[scale=0.5]{figures/3maint-5nj/estim-mu.png}\\
+\columnbreak
+
+\includegraphics[scale=0.5]{figures/3maint-5nj/estim-sigma2.png}  \\
+\columnbreak
+
+\includegraphics[scale=0.5]{figures/3maint-5nj/estim-rho.png}  
+\end{multicols}
+\vspace{-6mm}
+\caption{Estimation of $\mu$, $\sigma^2$ and $\rho$, situation 2}
+\label{estim2}
+\end{figure} 
+
+
+\begin{figure}[h!]
+\begin{multicols}{3}
+\includegraphics[scale=0.5]{figures/7maint-2nj/estim_mu_rho05_p2.png}\\
+
+\columnbreak
+
+\includegraphics[scale=0.5]{figures/7maint-2nj/estim_sigma2_rho05_p2.png} \\
+
+\columnbreak
+
+\includegraphics[scale=0.5]{figures/7maint-2nj/estim_rho05_p2.png}
+\end{multicols}
+\vspace{-6mm}
+\caption{Estimation of $\mu$, $\sigma^2$ and $\rho$, situation 3}
+\label{estim5}
+\end{figure}
+
+For $\mu$ and $\sigma^2$, the best estimations are obtained for scheme 1, and the worst for scheme 4. The quality of estimations in scheme 2 and 3 is equivalent. This result was expected and is related to the total number of observation in each scheme, given in \Cref{table:n}. The boxplots confirm the negative bias of $\hat\sigma^2$, previously proved for scheme 1. Similar bias seems to hold for the three other schemes.
+
+For $\rho$, the worst estimations are obtained as expected for scheme 4. The estimations for scheme 3 are significantly better than for scheme 2. From a practical point of view, it is not surprising that $\rho$  is better estimated when  the effect of maintenance on the degradation level is immediately observed.
+
+
+\begin{table} [!h]
+\caption{Total number of observations, $n$}
+\centering
+\label{table:n}
+\begin{tabular}{|c|c|c|c|c|}
+\cline{2-5}
+\multicolumn{1}{c|}{}& \multicolumn{4}{c|}{Observation scheme} \\
+\cline{1-1}
+
+Situation & \multicolumn{1}{c}{1}&\multicolumn{1}{c}{2}&\multicolumn{1}{c}{3}&\multicolumn{1}{c|}{4}  \\
+\cline{2-5}
+1& 16&13&12&9\\
+2&28 &25 &24 &21  \\
+3 &32&25&24&17\\
+%\ref{fig:convergences},\ref{fig:convergences3} & 16&16&16&16\\
+
+\hline
+\end{tabular}
+\end{table}
+
+The larger the number of observations, the better the quality of estimations, whether the degradation levels are observed at maintenance times or between maintenance times.
+For scheme 4, the estimations are better in situation 2 than in situation 3. Therefore, one could think that it is better to increase the number of observations between maintenance actions than the number of maintenance actions. However, \Cref{table:n} shows that the total number of observations is larger in situation 2 than in situation 3. Finally, to increase the quality of estimations, the main point seems to increase the number of observations whatever they are.
+
+
+
+\subsection{Influence of the value of the maintenance efficiency parameter $\rho$}
+
+In this sub-section, situations 3 to 5 (\Cref{estim5,estim3,estim4}) are compared, for which all the features of the simulations are equal except the value of $\rho$ : $\rho \in \{0.5,\ 0.1,\ 0.9\}$.
+Note that the number of observations in each scheme is the same for all three situations (see situation 3 in \Cref{table:n}), so the comparison of the situations will reflect only the impact of the value of $\rho$.
+
+The comparison of the quality of estimations between the four observation schemes leads to the same conclusions as in the previous section.
+Changing the value of $\rho$ has no impact on the estimations of $\mu$ and $\sigma^2$. The closer the value of $\rho$ is to 1, the better it is estimated. As a matter of fact, the bias and dispersion of $\rho$'s estimations are much smaller when $\rho$ is close to 1.
+
+\begin{figure}[h!]
+\begin{multicols}{3}
+
+\includegraphics[scale=0.5]{figures/7maint-2nj/estim_mu_rho01_p2.png}\\
+\columnbreak
+
+\includegraphics[scale=0.5]{figures/7maint-2nj/estim_sigma2_rho01_p2.png}  \\
+\columnbreak
+
+\includegraphics[scale=0.5]{figures/7maint-2nj/estim_rho01_p2.png}  
+
+\end{multicols}
+\vspace{-6mm}
+\caption{Estimation of $\mu$, $\sigma^2$ and $\rho$, situation 4}
+\label{estim3}
+\end{figure} 
+
+
+\begin{figure}[h!]
+\begin{multicols}{3}
+
+\includegraphics[scale=0.5]{figures/7maint-2nj/estim_mu_rho09_p2.png} \\
+\columnbreak
+
+\includegraphics[scale=0.5]{figures/7maint-2nj/estim_sigma2_rho09_p2.png}  \\
+\columnbreak
+
+\includegraphics[scale=0.5]{figures/7maint-2nj/estim_rho09_p2.png}  \\
+\end{multicols}
+\vspace{-6mm}
+\caption{Estimation of $\mu$, $\sigma^2$ and $\rho$, situation 5}
+\label{estim4}
+\end{figure} 
+
+
+\subsection{Influence of the observations locations}
+
+In the previous sub-sections, we have noticed that, as expected, the quality of the estimations increases with the total number of observations $n$. Therefore, in the following, we compare the quality of estimations between schemes with the same total number of observations.
+
+Starting from a sequence of observations following scheme 1, we  build observation sequences according to schemes 2 to 4 with the same number of observations, where the observation times are either close to the maintenance times (situation 6) or far from the maintenance times (situation 7). 
+Moreover, we choose to have a minimal number of observations between maintenance actions ($n_j \in \{0,1,2\}$), so that the impact of the locations of the observations with respect to maintenance times be clearly visible.
+
+
+\subsubsection{Observation backgrounds}
+Situation 6 for which the observation times are close to maintenance times is illustrated in \Cref{fig:convergences}.
+Situation 7 for which the observation times are far from maintenance times is illustrated in \Cref{fig:convergences3}.
+In both situations, $n=16$ degradation levels are observed in every scheme.
+The observations locations in situations 6 and 7 are described hereafter and illustrated in \Cref{fig:laurent}.
+
+\begin{enumerate}
+\item First observation scheme, $n_j=0$. \\
+The degradation levels are only observed at the maintenance times.
+\item Second observation scheme, $n_j=1$.
+\begin{itemize}
+\item the observed degradation levels are close to the missing values at maintenance times, 
+ $t_{j,1}=\tau_j+\frac{1}{10}(\tau_{j+1}-\tau_j)$ (Situation 6,  \Cref{fig:convergences})
+\item the observed degradation levels are located at the middle time between two successive maintenance actions , 
+$t_{j,1}= \tau_j+\frac{1}{2}(\tau_{j+1}-\tau_j)$ (Situation 7,  \Cref{fig:convergences3})
+\end{itemize}
+\item Third observation scheme, $n_j=1$.
+\begin{itemize}
+\item the observed degradation levels are close to the missing values at maintenance times , 
+$t_{j,1}=\tau_{j+1}-\frac{1}{10}(\tau_{j+1}-\tau_j)$ (Situation 6, \Cref{fig:convergences})
+\item the observed degradation levels are located at the middle time between two successive maintenance actions ,
+$t_{j,1}= \tau_j+\frac{1}{2}(\tau_{j+1}-\tau_j)$  (Situation 7, \Cref{fig:convergences3})
+\end{itemize}
+\item Fourth observation scheme, 
+$n_j=2$
+\begin{itemize}
+\item the observed degradation levels are close to the missing values at maintenance times, 
+$t_{j,1}= \tau_j+\frac{1}{10}(\tau_{j+1}-\tau_j)$ and $t_{j,2}= \tau_{j+1}-\frac{1}{10} (\tau_{j+1}-\tau_j)$ (Situation 6, \Cref{fig:convergences})
+\item the observed degradation levels are further from the maintenance times,
+$t_{j,1}=\tau_j+\frac{1}{3}(\tau_{j+1}-\tau_j)$ and $t_{j,2}=\tau_{j+1}-\frac{1}{3}(\tau_{j+1}-\tau_j)$ (Situation 7, \Cref{fig:convergences3}) 
+\end{itemize}
+\end{enumerate}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[scale=1]{figures/Rplot02.pdf} 
+\caption{Locations of the observations of the degradation under situation 6 (circles) and  7 (stars)} 
+\label{fig:laurent}
+\end{figure}
+
+ 
+ \begin{figure}[h!]
+\begin{multicols}{3}
+\includegraphics[scale=0.5]{figures/convergences/estim_mu.png}\\
+
+\columnbreak
+
+\includegraphics[scale=0.5]{figures/convergences/estim_sigma2.png}\\
+
+\columnbreak
+
+\includegraphics[scale=0.5]{figures/convergences/estim_rho.png} 
+\end{multicols}
+\vspace{-6mm}
+\caption{Estimation of $\mu$, $\sigma^2$ and $\rho$, situation 6}
+\label{fig:convergences}
+\end{figure}
+
+\begin{figure}[h!]
+\begin{multicols}{3}
+\includegraphics[scale=0.5]{figures/convergences/estim_mu_moitie.png}\\
+\columnbreak
+
+\includegraphics[scale=0.5]{figures/convergences/estim_sigma2_moitie.png} \\
+\columnbreak
+
+\includegraphics[scale=0.5]{figures/convergences/estim_rho_moitie.png} 
+\end{multicols}
+\vspace{-6mm}
+\caption{Estimation of $\mu$, $\sigma^2$ and $\rho$, situation 7}
+\label{fig:convergences3}
+\end{figure}
+
+\subsubsection{Quality of the Estimations}
+The most striking result from \Cref{fig:convergences,fig:convergences3} is that the estimations of $\mu$ and $\sigma^2$ are significantly worse for scheme 1 than for schemes 2 to 4 in both situations.
+This can be explained by the fact that, in scheme 1 with $n_j=0$, the observations consist of degradation increments $\Delta Y_{j,1}$ and degradation jumps $Z_j=-\rho\ \Delta Y_{j-1,1} $. Therefore, only half of the observations provides useful information for estimating $\mu$ and $\sigma^2$. 
+
+Moreover, it appears that the estimations of $\rho$ are better in situation 6 than in situation 7. This reflects the fact that, in order to estimate the maintenance efficiency, it is recommended to observe the degradation levels close to the maintenance actions. As before, the best scheme for the estimation of $\rho$ is scheme 3.
+
+%%%%%%%%%%%%%%%%%%%%
+\section{Conclusion}
+\label{section:conc}
+%%%%%%%%%%%%%%%%%%%%
+
+The paper has studied the statistical inference for a Wiener-based degradation model with $ARD_1$ imperfect maintenance actions under four different observation schemes. In each scheme, the maximum likelihood estimators of the three model parameters have been derived. Through a simulation study, the impact on the estimation quality of the number and locations of observations between successive maintenance actions, the number of maintenance actions and the maintenance efficiency have been investigated. As expected, the quality of estimation increases with the number of observations. An interesting feature is that the best estimation of $\rho$ is obtained for the third observation scheme. This means that if only a limited number of observations is possible, it is recommended to perform them just after each maintenance.
+
+The study has shown that the $ARD_1$ model has some drawbacks as regards inference issues. The model is not suitable for practical situations corresponding to the first observation scheme. In the third observation scheme, this can lead to an identifiability problem. This problem is not specific to Wiener processes and can also arise for other underlying degradation processes such as Gamma or Inverse Gaussian processes. To avoid these issues, other degradation models with imperfect maintenance have to be considered in the future. 
+
+Many other prospects arise from this paper. From the modelling point of view, assuming linear drifts is restrictive. It would be of interest to consider non-homogeneous Wiener processes. From the statistical point of view, deriving confidence intervals and asymptotic properties of the estimators are interesting extensions of this work.
+
+\section*{Acknowledgment }
+This work has been partially supported by the LabEx PERSYVAL-Lab (ANR-11-LABX-0025-01) funded by the French program Investissement d’avenir
+
+%%%%%%%%%%%%%%%%%%%
+\begin{appendices}
+
+%\appendix
+\section{Bias of $\hat{\sigma}^2$ in the first observation scheme}
+
+The maximum likelihood estimator of $\sigma^2$ in the first observation scheme is given by \Cref{eq:sigma2_cas1} 
+
+\begin{align*}
+\hat{\sigma}^2&=\frac{1}{N+k+1}\sum \limits_{j=0}^{k}\sum\limits_{i=1}^{n_j+1} \frac{\displaystyle(\Delta Y_{j,i}-\hat{\mu}\Delta t_{j,i})^2}{ \displaystyle \Delta t_{j,i}}\\
+&=\frac{1}{N+k+1} \ \Bigg[\sum\limits_{j=0}^{k}\sum\limits_{i=1}^{n_j+1} \frac{\Delta Y_{j,i}^2}{ \Delta t_{j,i}}+\hat\mu^2 \sum\limits_{j=0}^{k}\sum\limits_{i=1}^{n_j+1}\Delta t_{j,i}-2\ \hat\mu \sum\limits_{j=0}^{k}\sum\limits_{i=1}^{n_j+1}\Delta Y_{j,i}\Bigg]\\
+\end{align*}
+
+\hspace{2 mm} We have $ \ \displaystyle \sum\limits_{j=0}^{k}\sum\limits_{i=1}^{n_j+1}\Delta t_{j,i}=\tau\ \ $ and $ \ \ \displaystyle \sum\limits_{j=0}^{k}\sum\limits_{i=1}^{n_j+1}\Delta Y_{j,i}=\hat\mu \ \tau$.
+
+
+
+\begin{align*}
+\noindent \mbox{Therefore,} \ \ \ \hat{\sigma}^2&=\frac{1}{N+k+1} \Bigg[ \sum\limits_{j=0}^{k}\sum\limits_{i=1}^{n_j+1} \frac{\Delta Y_{j,i}^2}{ \Delta t_{j,i}} - \hat\mu^2\ \tau\Bigg]
+\end{align*}
+\begin{align*}
+\text{Thus,}\ \ \ \mathbb{E}[\hat{\sigma}^2]&=\frac{1}{N+k+1} \Bigg[ \sum\limits_{j=0}^{k}\sum\limits_{i=1}^{n_j+1} \frac{\mathbb{E}[\Delta Y_{j,i}^2]}{ \Delta t_{j,i}} - \mathbb{E}[\hat\mu^2]\ \tau\Bigg]
+\end{align*}
+
+\hspace{2 mm} We have $\ \ \mathbb{E}[\Delta Y_{j,i}^2]=\sigma^2 \Delta t_{j,i}+ \mu^2 \Delta t_{j,i}^2\ \ $ and $\ \ \mathbb{E}[\hat\mu^2]=\frac{\sigma^2}{\tau}+\mu^2$ 
+
+\begin{align*}
+\mbox{Thereby,}\ \  \mathbb{E}[\hat{\sigma}^2]&= \frac{1}{N+k+1} \Bigg[\sigma^2 (N+k+1)-\mu^2 \tau-\sigma^2+\mu^2\tau\Bigg]\ =\ \frac{ N+k}{N+k+1} \sigma^2
+\end{align*}
+
+\label{appendix:bsig1}
+
+\hspace{2 mm} Therefore, $\hat\sigma^2$ is a biased estimator and $\tilde{\sigma}^2={\displaystyle\frac{ N+k+1}{N+k}}\ \hat\sigma^2$ is an unbiased estimator of $\sigma^2$.
+
+\section{Maximum likelihood estimator of $\mu$ in the second observation scheme}
+\label{appendix:mle_mu2}
+The maximum likelihood estimator of $\mu$ in the second observation scheme is given by \Cref{eq:mle_mu2}
+
+
+\begin{align*}
+\hat{\mu}& = \frac{1}{\tau} \left[ Y(\tau)+ \hat{\rho} \sum\limits_{j=1}^{k} Y(\tau_j^-) -(1-\hat{\rho})\sum\limits_{j=1}^{k} \sum\limits_{i=0}^{j-1}\hat{\rho}^{j-i}Y(\tau_i^-)\right] 
+\end{align*}
+
+Let us notice that $\sum\limits_{j=1 }^{k}\ \sum\limits_{i=0}^{j-1}\hat{\rho}^{j-i}Y(\tau_i^-)\ =\ \sum\limits_{i=1}^{k-1} \ \sum\limits_{j=i+1}^{k}\hat{\rho}^{j-i}Y(\tau_i^-)$ and
+
+\begin{align*}
+(1-\hat\rho)\ \sum\limits_{i=1}^{k-1} \ \left(\sum\limits_{j=i+1}^{k}\hat{\rho}^{j-i}\right)Y(\tau_i^-)&=\sum\limits_{i=1}^{k-1}  \left(\sum\limits_{j=i+1}^{k}\hat{\rho}^{j-i} -\sum\limits_{j=i+1}^{k} \hat{\rho}^{j-i+1}\right) Y(\tau_i^-)\\
+&=\sum\limits_{i=1}^{k-1} (\hat\rho -\hat\rho^{k-i+1}) Y(\tau_i^-)
+\end{align*}
+
+Since $\ Y(\tau)+ \hat{\rho} \sum\limits_{j=1}^{k} Y(\tau_j^-)=Y(\tau_{k+1}^-)+ \hat{\rho}  Y(\tau_k^-)+\hat\rho\ \sum\limits_{j=1}^{k-1} Y(\tau_j^-)\ $ then,
+
+\begin{align*}
+&Y(\tau)+ \hat{\rho} \sum\limits_{j=1}^{k} Y(\tau_j^-) -(1-\hat{\rho})\sum\limits_{j=1}^{k} \sum\limits_{i=1}^{j-1}\hat{\rho}^{j-i}\ Y(\tau_i^-)\ =\ Y(\tau_{k+1}^-)+ \hat{\rho} \  Y(\tau_k^-)+\sum\limits_{i=1}^{k-1} \hat\rho^{k-i+1}\  Y(\tau_i^-)
+\end{align*}
+
+\begin{align*}
+\text{Thus, } \hat{\mu}& = \frac{1}{\tau}  \sum\limits_{i=1}^{k+1}  \hat\rho^{k-i+1}\  Y(\tau_i^-)
+\end{align*}
+
+
+
+\section{Maximum likelihood estimator of $\mu$ in the third observation scheme}
+\label{appendix:mle_mu3}
+
+The maximum likelihood estimator of $\mu$ in the third observation scheme is given by \Cref{eq:mle_mu3} 
+
+\begin{align*}
+&\hat{\mu} = \frac{1}{t_{k,n_{k}}} \left[ \sum\limits_{j=0}^{k}\ \sum\limits_{i=1}^{n_j}\Delta Y_{j,i}\ +\ \frac{1}{1-\hat{\rho}}\ \sum\limits_{j=1}^{k} \left(Z_j^{(3)}+\hat{\rho} \sum \limits_{i=1}^{n_{j-1}}\Delta Y_{j-1,i}\right)\right]\\
+&\text{We have }\frac{1}{1-\hat{\rho}}\ \sum\limits_{j=1}^{k} Z_j^{(3)}\ =\ \frac{\hat\rho}{1-\hat{\rho}}\ \sum\limits_{j=1}^{k} Z_j^{(3)} +\sum\limits_{j=1}^{k} Z_j^{(3)} \\
+&\text{Furthermore }Y(\tau_k^+)= \sum\limits_{j=1}^{k} \sum \limits_{i=1}^{n_{j-1}}\Delta Y_{j-1,i} + \sum\limits_{j=1}^{k} Z_j^{(3)} \\
+&\hspace{7mm} Y(t_{k,n_k})=\sum\limits_{j=0}^{k}\ \sum\limits_{i=1}^{n_j}\Delta Y_{j,i} + \sum\limits_{j=1}^{k} Z_j^{(3)}\\
+&\text{Thus, } \hat\mu=\frac{1}{t_{k,n_k}} \left[Y(t_{k,n_k})+\frac{\hat\rho}{1-\hat\rho}Y(\tau_k^+)\right]
+\end{align*}
+
+\end{appendices}
+
+%\singlespacing
+%\printbibliography
+%\bibliographystyle{amsplain}
+\bibliographystyle{unsrt}
+
+\bibliography{references2}
+
+%\singlespacing
+
+
+
+
+
+\end{document}
